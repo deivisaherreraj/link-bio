@@ -18,11 +18,10 @@ def footer() -> rx.Component:
             rx.box(
                 f"Copyright © 2023-{datetime.date.today().year} ",
                 rx.text(
-                    "DHerreraJDev by Deivis Andres Herrera Julio", 
+                    "DherrerajDev by Deivis Andres Herrera Julio", 
                     as_="span", 
                     color=Color.PRIMARY.value
                 ),
-                " v1.",
                 padding_top=Size.DEFAULT.value,
                 color=TextColor.BODY.value
             ),
@@ -39,7 +38,7 @@ def footer() -> rx.Component:
                     alt="Logo GitHub"
                 ),
                 rx.text(
-                    "CONSTRUYENDO SOFTWARE CON ♥ DESDE COLOMBIA PARA EL MUNDO.",
+                    "INNOVACIÓN Y PASIÓN ♥ EN CADA LÍNEA DE CÓDIGO",
                     font_size=Size.MEDIUM.value,
                     margin_top=Size.ZERO.value,
                     color=TextColor.BODY.value
