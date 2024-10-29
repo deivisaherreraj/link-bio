@@ -35,7 +35,8 @@ def footer() -> rx.Component:
                 rx.image(
                     src="/icons/github.svg",
                     height=Size.LARGE.value,
-                    width=Size.LARGE.value
+                    width=Size.LARGE.value,
+                    alt="Logo GitHub"
                 ),
                 rx.text(
                     "CONSTRUYENDO SOFTWARE CON ♥ DESDE COLOMBIA PARA EL MUNDO.",

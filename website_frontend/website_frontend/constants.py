@@ -1,6 +1,6 @@
 # Comunes
 G_TAG = "G-T3G0762RZV"
-USER = "cl4sius"
+USER = "DeivisAHerreraJ"
 
 # Cabecera
 GITHUB_URL = "https://github.com/deivisaherreraj"

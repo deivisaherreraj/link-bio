@@ -7,13 +7,14 @@ from website_frontend.styles.colors import Color, TextColor
 from website_frontend.components.link_icon import link_icon
 from website_frontend.components.info_text import info_text
 from website_frontend.components.link_button import link_button
+from website_frontend.state.PageState import PageState
 
-def header(details=True, live=False, live_title="") -> rx.Component:
+def header(details=True) -> rx.Component:
     return rx.vstack(
         rx.hstack(
             rx.box(
                 rx.cond(
-                    live,
+                    PageState.live_status.live,
                     rx.link(
                         rx.image(
                             src="/icons/twitch.svg",
@@ -81,18 +82,39 @@ def header(details=True, live=False, live_title="") -> rx.Component:
                         f"{experience()}+",
                         "años de experiencia"
                     ),
+                    # TODO Habilitar al implementar los proyectos
+                    # rx.spacer(),
+                    # info_text(
+                    #     "100+", "aplicaciones creadas"
+                    # ),
                     width="100%"
                 ),
                 rx.cond(
-                    live,
+                    PageState.live_status.live,
                     link_button(
                         "En directo",
-                        live_title,
+                        PageState.live_status.title,
                         "/icons/twitch.svg",
                         const.TWITCH_URL,
                         False,
                         True,
-                        Color.PURPLE.value
+                        highlight_color=Color.PURPLE.value,
+                        animated=True
+                    ),
+                    rx.box(
+                        rx.cond(
+                            PageState.next_live,
+                            link_button(
+                                "Próximo directo",
+                                PageState.next_live,
+                                "/icons/twitch.svg",
+                                const.TWITCH_URL,
+                                highlight_color=Color.PURPLE.value,
+                                animated=True
+                            ),
+                        ),
+                        width="100%",
+                        on_mount=PageState.check_schedule
                     )
                 ),
                 rx.text(
@@ -111,9 +133,9 @@ def header(details=True, live=False, live_title="") -> rx.Component:
         ),
         width="100%",
         spacing=Spacing.BIG.value,
-        align_items="start"
+        align_items="start",
+        on_mount=PageState.check_live
     )
-
 
 def experience() -> int:
     return datetime.date.today().year - 2013

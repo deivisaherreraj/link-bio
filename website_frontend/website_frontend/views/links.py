@@ -2,9 +2,11 @@ import reflex as rx
 import website_frontend.constants as const
 
 from website_frontend.routes import Route
+from website_frontend.components.link_featured import link_featured
 from website_frontend.components.link_button import link_button
 from website_frontend.components.title import title
 from website_frontend.styles.styles import Color, Spacing
+from website_frontend.state.PageState import PageState
 
 
 def links() -> rx.Component:
@@ -39,6 +41,22 @@ def links() -> rx.Component:
             "Mi tienda en Gumroad donde vendo recursos, cursos, o productos digitales",
             "/icons/gumroad.svg",
             const.GUMROAD_URL
+        ),
+        
+        rx.cond(
+            PageState.featured_info,
+            rx.vstack(
+                title("Destacado"),
+                rx.flex(
+                    rx.foreach(
+                        PageState.featured_info,
+                        link_featured
+                    ),
+                    flex_direction=["column", "row"],
+                    spacing=Spacing.DEFAULT.value
+                ),
+                spacing=Spacing.DEFAULT.value
+            )
         ),
                 
         title("Recursos y más"),
@@ -85,4 +103,5 @@ def links() -> rx.Component:
         ),
         width="100%",
         spacing=Spacing.DEFAULT.value,
+        on_mount=PageState.featured_links
     )

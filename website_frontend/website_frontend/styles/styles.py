@@ -6,6 +6,16 @@ from .fonts import Font, FontWeight
 
 # Constants
 MAX_WIDTH = "560px"
+FADEIN_ANIMATION = "animate__animated animate__lightSpeedInLeft"
+BOUNCEIN_ANIMATION = "animate__animated animate__bounceInDown"
+
+# Styles
+STYLESHEETS = [
+    "https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap",
+    "https://fonts.googleapis.com/css2?family=Comfortaa:wght@500&display=swap",
+    "https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css",
+    "/css/styles.css"
+]
 
 # Logo
 class Logo(Enum):
@@ -33,13 +43,6 @@ class Spacing(Enum):
     MEDIUM_BIG = "7"
     VERY_BIG = "9"
 
-# Styles
-STYLESHEETS = [
-    "https://fonts.googleapis.com/css2?family=Poppins:wght@300;500&display=swap",
-    "https://fonts.googleapis.com/css2?family=Comfortaa:wght@500&display=swap",
-    "/css/styles.css"
-]
-
 BASE_STYLE = {
     "font_family": Font.DEFAULT.value,
     "font_weight": FontWeight.LIGHT.value,
@@ -49,7 +52,7 @@ BASE_STYLE = {
         "font_family": Font.TITLE.value,
         "font_weight": FontWeight.MEDIUM.value
     },
-    rx.chakra.Button: {
+    rx.button: {
         "width": "100%",
         "height": "100%",
         "padding": Size.SMALL.value,
@@ -58,6 +61,7 @@ BASE_STYLE = {
         "background_color": Color.CONTENT.value,
         "white_space": "normal",
         "text_align": "start",
+        "--cursor-button": "pointer",
         "_hover": {
             "background_color": Color.SECONDARY.value
         }
