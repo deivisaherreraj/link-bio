@@ -49,9 +49,9 @@ def footer() -> rx.Component:
             is_external=True
         ),
         float_button(
-            icon=rx.image(src="/icons/donate.svg"),            
+            # icon=rx.image(src="/icons/donate.svg"),            
             href=const.COFFEE_URL,
-            tooltip=rx.el.div("Invítame a un café")
+            tooltip="Invítame a un café"
         ),
         align="center",
         margin_bottom=Size.BIG.value,

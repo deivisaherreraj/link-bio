@@ -13,10 +13,7 @@ class SupabaseAPI:
 
     def __init__(self) -> None:
         if self.SUPABASE_URL != None and self.SUPABASE_KEY != None:
-            self.supabase: Client = create_client(
-                self.SUPABASE_URL, 
-                self.SUPABASE_KEY
-            )
+            self.supabase: Client = create_client(self.SUPABASE_URL, self.SUPABASE_KEY)
 
     def featured(self) -> list[Featured]:
         response = self.supabase.table("featured").select("*").order("init_date", desc=True).limit(2).execute()

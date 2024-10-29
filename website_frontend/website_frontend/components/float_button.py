@@ -5,9 +5,9 @@ from website_frontend.styles.colors import Color
 class FloatButton(rx.Component):
     library = "antd"
     tag = "FloatButton"
-    icon: rx.Var[rx.el.Img]
+    # icon: rx.Var[rx.el.Img]
     href: rx.Var[str]
-    tooltip: rx.Var[rx.el.Div]
+    tooltip: rx.Var[str]
     target = "_blank"
     badge = {"dot": True, "color": Color.PRIMARY.value}
 
