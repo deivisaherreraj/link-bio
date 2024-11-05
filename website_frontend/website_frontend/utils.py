@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 def lang() -> rx.Component:
     return rx.script("document.documentElement.lang='es'")
 
-preview = "https://dherrerajdev.netlify.app/preview.png"
+preview = "https://dherrerajdev.vercel.app/preview.png"
 
 _meta = [
     {"name": "og:type", "content": "website"},
