@@ -47,11 +47,11 @@ def footer() -> rx.Component:
             href=const.REPO_URL,
             is_external=True
         ),
-        float_button(
-            # icon=rx.image(src="/icons/donate.svg"),            
-            href=const.COFFEE_URL,
-            tooltip="Invítame a un café"
-        ),
+        # float_button(
+        #     # icon=rx.image(src="/icons/donate.svg"),            
+        #     href=const.COFFEE_URL,
+        #     tooltip="Invítame a un café"
+        # ),
         align="center",
         margin_bottom=Size.BIG.value,
         padding_bottom=Size.VERY_BIG.value,

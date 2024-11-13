@@ -26,7 +26,8 @@ def links() -> rx.Component:
             "Discord",
             "El chat y los grupos de estudio de la comunidad",
             "/icons/discord.svg",
-            const.DISCORD_URL
+            const.DISCORD_URL,
+            True
         ),
         
         title("Plataformas de trabajo"),
@@ -69,21 +70,31 @@ def links() -> rx.Component:
             False
         ),
         link_button(
-            "DHerreraJDev",
-            "Mi sitio web",
-            "/icons/developer.svg",
-            const.DHERRERAJDEV_URL,
+            "DeivisAHerreraJ",
+            "Mi porfolio web",
+            "/icons/portfolio.svg",
+            const.DEIVISAHERRERAJ_URL,
             False,
             True,            
             Color.SECONDARY.value
         ),
+        # TODO Deshabilitar al tener la pagina
+        # link_button(
+        #     "DherrerajDev",
+        #     "Mi sitio web",
+        #     "/icons/challenges.svg",
+        #     const.DHERRERAJDEV_URL,
+        #     True,
+        #     False,            
+        #     Color.SECONDARY.value
+        # ),
         link_button(
             "Invítame a un café",
             "¿Quieres ayudarme a que siga creando contenido?",
             "/icons/coffee.svg",
             const.COFFEE_URL,
             False,
-            False
+            True
         ),
 
         title("Contacto"),
@@ -93,7 +104,7 @@ def links() -> rx.Component:
             "/icons/checkemail.svg",
             Route.INDEX.value,
             True,
-            False
+            True
         ),
         link_button(
             "Email",

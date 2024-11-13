@@ -119,10 +119,11 @@ def header(details=True) -> rx.Component:
                 ),
                 rx.text(
                     f"""
-                    Soy full-stack developer, un apasionado del desarrollo de software y la tecnología, 
-                    mi enfoque se basa en la integración de las tecnologías 
-                    más avanzadas en el ámbito del Back-End y Front-End y así explorar nuevas ideas y trabajar en proyectos emocionantes. 
-                    Aquí podrás encontrar todos mis enlaces de interés !Bienvenido/a¡
+                    ¡Hola! 👋, Soy Deivis Herrera, Desarrollador Full-Stack con experiencia en crear 
+                    soluciones de alto impacto, ofreciendo un desarrollo de software confiable y eficiente, tanto del lado 
+                    del Back-End 💻 como del Front-End 🌐. Estoy siempre listo para explorar nuevas ideas y hacer 
+                    realidad proyectos emocionantes.
+                    Aquí encontrarás mis trabajos, contacto y perfiles profesionales 🔗. ¡Gracias por tu visita!
                     """,
                     font_size=Size.DEFAULT.value,
                     color=TextColor.BODY.value
