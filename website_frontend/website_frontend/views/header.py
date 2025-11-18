@@ -96,8 +96,6 @@ def header(details=True) -> rx.Component:
                         PageState.live_status.title,
                         "/icons/twitch.svg",
                         const.TWITCH_URL,
-                        False,
-                        True,
                         highlight_color=Color.PURPLE.value,
                         animated=True
                     ),

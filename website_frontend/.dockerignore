@@ -1,2 +1,27 @@
+# Carpeta interna generada por Reflex
 .web
-__pycache__/*
+
+# Cachés de Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Entornos virtuales
+.venv/
+venv/
+**/.venv/
+**/venv/
+
+# Git / CI
+.git
+.gitignore
+.github
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Builds estáticos locales (si los tienes)
+public/
+dist/
+build/

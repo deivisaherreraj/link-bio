@@ -1,7 +1,41 @@
+.states
+# --- Configuración / Entorno ---
+# --- Docker ---
+# --- IDE / Editor ---
+# --- Logs ---
+# --- Python ---
+# --- Reflex ---
+# --- Sistema operativo ---
+# Assets externos que no quieres commitear
+# Entornos virtuales
 *.db
+*.egg-info/
+*.env.*.local
+*.env.local
+*.log
 *.py[cod]
+*.pyd
+*.pyo
+*.so
+*.swo
+*.swp
+.DS_Store
 .env
+.idea/
+.reflex/
 .venv/
+.venv_docker/
+.vscode/
 .web
+.web/
+ENV/
+Thumbs.db
 __pycache__/
 assets/external/
+build/
+dist/
+docker-compose.override.yml
+env/
+frontend/
+public/
+venv/
