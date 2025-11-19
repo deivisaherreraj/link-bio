@@ -1,8 +1,8 @@
 # Dockerfile para desplegar tu app Reflex (frontend + backend) en un solo contenedor
 # Compatible con Railway, Render, DigitalOcean Apps, etc.
 
-# Establece la imagen base como Python 3.11
-FROM python:3.11-slim
+# Imagen base completa (más simple, incluye unzip y herramientas del sistema)
+FROM python:3.11
 
 # Configuración básica de Python
 ENV PYTHONDONTWRITEBYTECODE=1 \
