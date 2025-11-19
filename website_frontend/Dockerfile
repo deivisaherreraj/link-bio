@@ -58,12 +58,12 @@ COPY . .
 # Inicializamos Reflex (genera estructura interna .web, etc.)
 RUN reflex init
 
-# Compilamos el frontend a estáticos y los movemos a /srv
-# (sigue el patrón recomendado en la guía de self-hosting de Reflex)
-RUN reflex export --frontend-only --no-zip && \
-    mkdir -p /srv && \
-    mv .web/_static/* /srv/ && \
-    rm -rf .web
+# Exportamos SOLO el frontend sin zip
+RUN reflex export --frontend-only --no-zip
+
+# Copiamos los estáticos generados a /srv
+# En Reflex actual, los estáticos quedan en .web/build/client
+RUN mkdir -p /srv && cp -r .web/build/client/* /srv/ && rm -rf .web
 
 # Hasta que Reflex maneje bien SIGTERM
 STOPSIGNAL SIGKILL
