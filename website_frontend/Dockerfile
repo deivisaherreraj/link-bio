@@ -30,7 +30,7 @@ ENV PORT=${PORT} \
 
 # Caddyfile inline: sirve frontend desde /srv y hace proxy al backend de Reflex (8000)
 RUN cat > Caddyfile <<EOF
-:\$PORT
+:{\$PORT}
 
 encode gzip
 
