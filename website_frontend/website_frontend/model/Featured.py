@@ -1,6 +1,15 @@
 from pydantic import BaseModel
+from typing import List, Optional
+
+from website_frontend.model.ProjectStatus import ProjectStatus
+
 
 class Featured(BaseModel):
+    href: str
+    image_url: str
     title: str
-    image: str
-    url: str
+    description: Optional[str] = None
+    technologies: List[str] = []
+    github_url: str
+    live_url: str
+    status: ProjectStatus

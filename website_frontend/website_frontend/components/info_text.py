@@ -1,7 +1,7 @@
 import reflex as rx
 
-from website_frontend.styles.styles import Size
-from website_frontend.styles.colors import Color, TextColor
+from website_frontend.styles.fonts import FontSize, FontWeight
+from website_frontend.styles.colors import Color
 
 
 def info_text(title: str, subTitle: str) -> rx.Component:
@@ -9,10 +9,10 @@ def info_text(title: str, subTitle: str) -> rx.Component:
         rx.text(
             title,
             as_="span",
-            font_weight="bold",
-            color=Color.PRIMARY.value
+            font_weight=FontWeight.BOLD.value,
+            color=Color.PRIMARY.value,
         ),
         f" {subTitle}",
-        font_size=Size.MEDIUM.value,
-        color=TextColor.BODY.value
+        font_size=FontSize.SMALL.value,
+        color=Color.GRAY.value,
     )

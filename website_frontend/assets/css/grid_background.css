@@ -1,0 +1,46 @@
+:root {
+    /* Colores base para fondo oscuro con grid */
+    --grid-bg-color: #0C151D;
+    /* similar a slate-950 */
+    --grid-line-color: #1f2937;
+    /* similar a slate-800 */
+    --grid-text-color: #e5e7eb;
+    /* similar a zinc-200 */
+}
+
+/* Fondo global del sitio: SIEMPRE oscuro con grid */
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    background-color: var(--grid-bg-color);
+    color: var(--grid-text-color);
+
+    /* Grid principal tipo "cuadriculado" */
+    background-image:
+        linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* Eliminamos dependencia de prefers-color-scheme:
+   siempre será este fondo oscuro, sin cambiar con el SO */
+
+/* Opcional: un ligero fade muy sutil en el centro,
+   sin volverlo blanco ni tapar el grid completo. */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+
+    /* degradado muy suave para dar profundidad, no blanco */
+    background:
+        radial-gradient(circle at center,
+            rgba(15, 23, 42, 0) 20%,
+            /* transparente en el centro */
+            rgba(15, 23, 42, 0.7) 75%
+            /* oscurece un poco los bordes */
+        );
+}

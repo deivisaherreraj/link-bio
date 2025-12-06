@@ -1,11 +1,496 @@
-body {
-    background-color: #0C151D;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #0099FF;
+  --color-primary-light: #3DB0AB; /* o el que uses */
+  --color-text-accent: #EAB308;   /* ejemplo: dorado */
+}
+
+/* Estado base del overlay: oculto / transparente */
+.overlay-hidden {
+  opacity: 0;
+}
+
+/* Cuando el contenedor .group entra en hover, aplicamos
+  la animación flipInY de animate.css y mostramos el overlay. */
+.group:hover .hover-flip-in-y {
+  opacity: 1;
+  animation-name: flipInY;
+  animation-duration: var(--animate-duration, 0.8s);
+  animation-timing-function: var(--animate-timing-function, ease-out);
+  animation-fill-mode: both;
+}
+
+.scroller {
+  mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
+}
+
+.animate-scroll {
+  animation-name: scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: var(--animation-direction, forwards);
+  animation-duration: var(--animation-duration, 40s);
+}
+
+.scroller:hover .animate-scroll {
+  animation-play-state: paused;
+}
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Infinite Scroll Animation */
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-100% - 1rem));
+  }
 }
 
 @keyframes blinker {
-    50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-scroll {
+  animation: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
 }
 
 .blink {
-    animation: blinker 1.5s linear infinite;
+  animation: blinker 1.5s linear infinite;
+}
+
+/* ============================================
+  ERROR PAGE ANIMATIONS
+============================================ */
+
+/* Fade In Animation for Error Page */
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+  AVATAR STATUS BADGE SYSTEM
+============================================ */
+
+/* Avatar Container */
+.hero__avatar-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+
+.hero__avatar {
+  object-fit: cover;
+  border: 2px solid #0099FF;
+  padding: 4px;
+  background-color: #0D1218;
+}
+
+/* Status Badge */
+.status-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid #05080D;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  z-index: 10;
+}
+
+.status-badge:hover {
+  transform: scale(1.1);
+}
+
+.status-badge i {
+  font-size: 1em;
+  color: #ffffff;
+}
+
+/* Status Tooltip */
+.status-tooltip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  right: 50%;
+  transform: translateX(50%) translateY(4px);
+  background-color: #0D1218;
+  color: #FFFFFF;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 20;
+}
+
+.status-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 50%;
+  transform: translateX(50%);
+  border: 6px solid transparent;
+  border-top-color: #0D1218;
+}
+
+.status-badge:hover .status-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(50%) translateY(0);
+}
+
+.profile-name-gradient {
+  background: linear-gradient(
+    to right,
+    var(--color-primary),
+    var(--color-primary-light),
+    var(--color-text-accent)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ============================================
+  STATUS STATES & ANIMATIONS
+============================================ */
+
+/* Active State - Azure Blue with Pulse */
+.status-badge.is-active {
+  background-color: #0099FF;
+  animation: pulse-azure 2s ease-in-out infinite;
+}
+
+@keyframes pulse-azure {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 153, 255, 0.7);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(0, 153, 255, 0);
+  }
+}
+
+/* Hiring State - Green with Blink */
+.status-badge.is-hiring {
+  background-color: #10B981;
+  animation: blink-green 0.8s ease-in-out infinite;
+}
+
+@keyframes blink-green {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Paused State - Amber with Fade */
+.status-badge.is-paused {
+  background-color: #F59E0B;
+  animation: fade-amber 3s ease-in-out infinite;
+}
+
+@keyframes fade-amber {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Consulting State - Violet with Subtle Pulse */
+.status-badge.is-consulting {
+  background-color: #8B5CF6;
+  animation: pulse-violet 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-violet {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(139, 92, 246, 0);
+  }
+}
+
+/* Unavailable State - Red (No Animation) */
+.status-badge.is-unavailable {
+  background-color: #EF4444;
+}
+
+/* Full-Time Busy - Azul profundo con anillo lento */
+.status-badge.is-fulltime {
+  background-color: #2563EB;
+  animation: ring-fulltime 2.4s ease-in-out infinite;
+}
+
+@keyframes ring-fulltime {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5);
+  }
+
+  40% {
+    box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+}
+
+/* Learning State - Cyan Glow */
+.status-badge.is-learning {
+  background-color: #22D3EE;
+  animation: glow-cyan 2.2s ease-in-out infinite;
+}
+
+@keyframes glow-cyan {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.0),
+      0 0 8px 0 rgba(34, 211, 238, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.0),
+      0 0 16px 2px rgba(34, 211, 238, 0.8);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.0),
+      0 0 8px 0 rgba(34, 211, 238, 0.4);
+  }
+}
+
+/* Traveling State - Warm Fade (Fuera de oficina) */
+.status-badge.is-traveling {
+  background-color: #FACC15;
+  animation: fade-travel 3.2s ease-in-out infinite;
+}
+
+@keyframes fade-travel {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  50% {
+    transform: translateY(-2px);
+    opacity: 0.7;
+  }
+}
+
+/* Maintenance State - Orange Pulse */
+.status-badge.is-maintenance {
+  background-color: #FB923C;
+  animation: pulse-maintenance 2.6s ease-in-out infinite;
+}
+
+@keyframes pulse-maintenance {
+  0% {
+    box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.55);
+  }
+
+  50% {
+    box-shadow: 0 0 0 10px rgba(251, 146, 60, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(251, 146, 60, 0);
+  }
+}
+
+/* Streaming State - Magenta Beat */
+.status-badge.is-streaming {
+  background-color: #EC4899;
+  animation: beat-magenta 1.4s ease-in-out infinite;
+}
+
+@keyframes beat-magenta {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.65);
+  }
+
+  30% {
+    transform: scale(1.12);
+    box-shadow: 0 0 0 6px rgba(236, 72, 153, 0.0);
+  }
+
+  60% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.35);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.0);
+  }
+}
+
+/* Focus State - Indigo Subtle Focus */
+.status-badge.is-focus {
+  background-color: #6366F1;
+  animation: focus-indigo 3s ease-in-out infinite;
+}
+
+@keyframes focus-indigo {
+
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.45);
+  }
+
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 8px rgba(99, 102, 241, 0);
+  }
+}
+
+/* ============================================
+  PROJECT STATUS BADGE ANIMATIONS
+============================================ */
+
+/* Development - Yellow/Orange Pulse (Indicating active work) */
+.animate-pulse-dev {
+  animation: pulse-dev 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dev {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.6);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(251, 191, 36, 0);
+  }
+}
+
+/* Migration - Orange Fade (Indicating transition) */
+.animate-fade-migration {
+  animation: fade-migration 3s ease-in-out infinite;
+}
+
+@keyframes fade-migration {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Testing - Violet/Purple Glow (Emphasis on quality) */
+.animate-glow-testing {
+  animation: glow-testing 2.5s ease-in-out infinite;
+}
+
+@keyframes glow-testing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(167, 139, 250, 0),
+      0 0 6px 0 rgba(167, 139, 250, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0),
+      0 0 12px 2px rgba(167, 139, 250, 0.7);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(167, 139, 250, 0),
+      0 0 6px 0 rgba(167, 139, 250, 0.4);
+  }
+}
+
+/* Deploying - Blue Pulse (Indicating imminent action) */
+.animate-pulse-deploying {
+  animation: pulse-deploying 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-deploying {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 153, 255, 0.7);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(0, 153, 255, 0);
+  }
+}
+
+/* Paused - Red/Gray Fade (Indicating temporary inactivity) */
+.animate-fade-paused {
+  animation: fade-paused 3.5s ease-in-out infinite;
+}
+
+@keyframes fade-paused {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }

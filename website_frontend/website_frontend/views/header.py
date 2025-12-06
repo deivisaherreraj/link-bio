@@ -1,93 +1,47 @@
 import reflex as rx
 import datetime
-import website_frontend.constants as const
 
-from website_frontend.styles.styles import Size, Spacing
-from website_frontend.styles.colors import Color, TextColor
-from website_frontend.components.link_icon import link_icon
+import website_frontend.constants.site_constants as site_const
+
+from website_frontend.styles.styles import Spacing, Padding
+from website_frontend.styles.colors import Color
+from website_frontend.styles.fonts import FontSize
+
 from website_frontend.components.info_text import info_text
 from website_frontend.components.link_button import link_button
+
+from website_frontend.views.profile import profile
+
 from website_frontend.state.PageState import PageState
+
 
 def header(details=True) -> rx.Component:
     return rx.vstack(
-        rx.hstack(
-            rx.box(
-                rx.cond(
-                    PageState.live_status.live,
-                    rx.link(
-                        rx.image(
-                            src="/icons/twitch.svg",
-                            height=Size.DEFAULT.value,
-                            width=Size.DEFAULT.value
-                        ),
-                        href=const.TWITCH_URL,
-                        is_external=True,
-                        class_name="blink",
-                        border_radius="50%",
-                        padding=Size.SMALL.value,
-                        bg=Color.PURPLE.value,
-                        position="absolute",
-                        bottom="0",
-                        right="0"
-                    )
-                ),
-                rx.avatar(
-                    name="Deivis Herrera",
-                    size=Spacing.MEDIUM_BIG.value,
-                    src="/avatar.jpeg",
-                    radius="full",
-                    color=TextColor.BODY.value,
-                    bg=Color.CONTENT.value,
-                    padding="2px",
-                    border=f"4px solid {Color.PRIMARY.value}"
-                ),
-                position="relative"
-            ),
-            rx.vstack(
-                rx.heading(
-                    "Deivis Herrera Julio",
-                    size=Spacing.BIG.value
-                ),
-                rx.text(
-                    "@dherrerajdev",
-                    margin_top=Size.ZERO.value,
-                    color=Color.PRIMARY.value
-                ),
-                rx.hstack(
-                    link_icon(
-                        "/icons/github.svg",
-                        const.GITHUB_URL,
-                        "GitHub"
-                    ),
-                    link_icon(
-                        "/icons/linkedin.svg",
-                        const.LINKEDIN_URL,
-                        "LinkedIn"
-                    ),
-                    spacing=Spacing.LARGE.value,
-                    padding_top=Size.SMALL.value
-                ),
-                spacing=Spacing.ZERO.value,
-                align_items="start"
-            ),
-            align="end",
-            spacing=Spacing.DEFAULT.value
+        # ProfileHeader
+        profile(
+            name="Herrera, Deivis",
+            handle="@dherrerajdev",
+            tagline="Full-Stack Developer & Tech Enthusiast",
+            tech_stack="Especializado en desarrollo web moderno y arquitecturas escalables",
+            avatar_url="/avatar.jpeg",
+            avatar_status=PageState.avatar_status,
+            github_url=site_const.GITHUB_URL,
+            linkedin_url=site_const.LINKEDIN_URL,
+            email_url="mailto:deivisaherreraj@gmail.com",
         ),
         rx.cond(
             details,
             rx.vstack(
                 rx.flex(
-                    info_text(
-                        f"{experience()}+",
-                        "años de experiencia"
-                    ),
-                    # TODO Habilitar al implementar los proyectos
-                    # rx.spacer(),
-                    # info_text(
-                    #     "100+", "aplicaciones creadas"
-                    # ),
-                    width="100%"
+                    rx.spacer(),
+                    rx.spacer(),
+                    info_text(f"{experience()}+", "años de experiencia"),
+                    rx.spacer(),
+                    info_text("100+", "aplicaciones creadas"),
+                    rx.spacer(),
+                    rx.spacer(),
+                    width="100%",
+                    text_align="center",
                 ),
                 rx.cond(
                     PageState.live_status.live,
@@ -95,9 +49,9 @@ def header(details=True) -> rx.Component:
                         "En directo",
                         PageState.live_status.title,
                         "/icons/twitch.svg",
-                        const.TWITCH_URL,
+                        site_const.TWITCH_URL,
                         highlight_color=Color.PURPLE.value,
-                        animated=True
+                        animated=True,
                     ),
                     rx.box(
                         rx.cond(
@@ -106,35 +60,47 @@ def header(details=True) -> rx.Component:
                                 "Próximo directo",
                                 PageState.next_live,
                                 "/icons/twitch.svg",
-                                const.TWITCH_URL,
+                                site_const.TWITCH_URL,
                                 highlight_color=Color.PURPLE.value,
-                                animated=True
+                                animated=True,
                             ),
                         ),
                         width="100%",
-                        on_mount=PageState.check_schedule
-                    )
+                        on_mount=PageState.check_schedule,
+                    ),
                 ),
-                rx.text(
-                    f"""
-                    ¡Hola! 👋, Soy Deivis Herrera, Desarrollador Full-Stack con experiencia en crear 
-                    soluciones de alto impacto, ofreciendo un desarrollo de software confiable y eficiente, tanto del lado 
-                    del Back-End 💻 como del Front-End 🌐. Estoy siempre listo para explorar nuevas ideas y hacer 
-                    realidad proyectos emocionantes.
-                    Aquí encontrarás mis trabajos, contacto y perfiles profesionales 🔗. ¡Gracias por tu visita!
-                    """,
-                    font_size=Size.DEFAULT.value,
-                    color=TextColor.BODY.value
+                rx.el.Section.create(
+                    rx.text(
+                        """
+                        ¡Hola! 👋, Soy Deivis Herrera, Desarrollador Full-Stack con experiencia en crear
+                        soluciones de altos impacto, ofreciendo un desarrollo de software confiable y
+                        eficiente, tanto del lado del
+                        """,
+                        rx.text.strong("Back-End 💻", color=Color.WHITE.value),
+                        " como del ",
+                        rx.text.strong("Front-End 🌐", color=Color.WHITE.value),
+                        """
+                        . Estoy siempre listo para explorar nuevas ideas y hacer realidad proyectos emocionantes. Aquí
+                        encontrarás mis trabajos, contacto y perfiles profesionales 🔗. 🚀¡Gracias por tu
+                        visita y bienvenido a mi mundo digital!
+                        """,
+                        as_="p",
+                        font_size=FontSize.MEDIUM.value,
+                        color=Color.GRAY.value,
+                    ),
+                    padding_top=Padding.ZERO.value,
+                    padding_bottom=Padding.ZERO.value,
                 ),
                 width="100%",
-                spacing=Spacing.BIG.value
-            )
+                spacing=Spacing.BIG.value,
+            ),
         ),
         width="100%",
         spacing=Spacing.BIG.value,
         align_items="start",
-        on_mount=PageState.check_live
+        on_mount=[PageState.check_live, PageState.check_avatar_status],
     )
+
 
 def experience() -> int:
     return datetime.date.today().year - 2013

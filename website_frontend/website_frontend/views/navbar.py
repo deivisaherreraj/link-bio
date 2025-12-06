@@ -12,17 +12,16 @@ def navbar() -> rx.Component:
         rx.link(
             rx.box(
                 rx.text("<", as_="span", color=TextColor.BODY.value),
-                rx.text("dherreraj", as_="span", color=Color.PRIMARY.value),
-                rx.text("dev", as_="span", color=Color.SECONDARY.value),
+                rx.text("deivisaherreraj.dev", as_="span", color=Color.PRIMARY.value),
                 rx.text("/>", as_="span", color=TextColor.BODY.value),
-                style=styles.navbar_title_style
+                style=styles.navbar_title_style,
             ),
-            href=Route.INDEX.value
+            href=Route.INDEX.value,
         ),
         position="sticky",
         bg=Color.CONTENT.value,
         padding_x=Size.BIG.value,
         padding_y=Size.DEFAULT.value,
         z_index="999",
-        top="0"
+        top="0",
     )

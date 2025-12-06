@@ -1,5 +1,5 @@
 import reflex as rx
-import website_frontend.constants as const
+import website_frontend.constants.site_constants as const
 
 from website_frontend.components.link_button import link_button
 from website_frontend.components.title import title
@@ -16,24 +16,23 @@ def courses_links() -> rx.Component:
             const.CSHARP_COURSE_URL,
             True,
             False,
-            Color.SECONDARY.value
+            Color.SECONDARY.value,
         ),
-        
         title("Mucho más en"),
         link_button(
             "Twitch",
             "Transmisiones sobre programación de lunes a viernes",
             "/icons/twitch.svg",
             const.TWITCH_URL,
-            True
+            True,
         ),
         link_button(
             "YouTube",
             "Tutoriales sobre desarrollo de software semanales",
             "/icons/youtube.svg",
             const.YOUTUBE_URL,
-            True
-        ),        
+            True,
+        ),
         width="100%",
         spacing=Spacing.DEFAULT.value,
     )
