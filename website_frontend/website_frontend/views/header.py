@@ -3,7 +3,7 @@ import datetime
 
 import website_frontend.constants.site_constants as site_const
 
-from website_frontend.styles.styles import Spacing, Padding
+from website_frontend.styles.styles import Spacing, Padding, Margin
 from website_frontend.styles.colors import Color
 from website_frontend.styles.fonts import FontSize
 
@@ -46,22 +46,24 @@ def header(details=True) -> rx.Component:
                 rx.cond(
                     PageState.live_status.live,
                     link_button(
-                        "En directo",
-                        PageState.live_status.title,
-                        "/icons/twitch.svg",
-                        site_const.TWITCH_URL,
-                        highlight_color=Color.PURPLE.value,
+                        href=site_const.TWITCH_URL,
+                        title="En directo",
+                        description=PageState.live_status.title,
+                        icon="fa-brands fa-twitch",
+                        icon_color=Color.PURPLE.value,
+                        border_color=Color.PURPLE.value,
                         animated=True,
                     ),
                     rx.box(
                         rx.cond(
                             PageState.next_live,
                             link_button(
-                                "Próximo directo",
-                                PageState.next_live,
-                                "/icons/twitch.svg",
-                                site_const.TWITCH_URL,
-                                highlight_color=Color.PURPLE.value,
+                                href=site_const.TWITCH_URL,
+                                title="Próximo directo",
+                                description=PageState.next_live,
+                                icon="fa-brands fa-twitch",
+                                icon_color=Color.PURPLE.value,
+                                border_color=Color.PURPLE.value,
                                 animated=True,
                             ),
                         ),
@@ -69,6 +71,7 @@ def header(details=True) -> rx.Component:
                         on_mount=PageState.check_schedule,
                     ),
                 ),
+                # Introduction a mi Bio
                 rx.el.Section.create(
                     rx.text(
                         """
@@ -92,7 +95,7 @@ def header(details=True) -> rx.Component:
                     padding_bottom=Padding.ZERO.value,
                 ),
                 width="100%",
-                spacing=Spacing.BIG.value,
+                margin_bottom=Margin.VERY_BIG.value,
             ),
         ),
         width="100%",

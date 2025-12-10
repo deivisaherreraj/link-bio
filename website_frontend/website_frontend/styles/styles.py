@@ -1,7 +1,7 @@
 import reflex as rx
 
 from enum import Enum
-from .colors import Color, TextColor
+from .colors import Color, TextColor, BackgroundColor, BorderColor
 from .fonts import Font, FontSize, FontWeight
 
 # Constants
@@ -78,6 +78,7 @@ class Padding(Enum):
     ZERO = "0px"
     VERY_SMALL = "2px"
     SMALL = "4px"
+    VERY_SMALLER = "6px"
     MEDIUM = "8px"
     DEFAULT = "12px"
     LARGE = "16px"
@@ -96,14 +97,22 @@ BASE_STYLE = {
     rx.button: {
         "width": "100%",
         "height": "100%",
-        "padding": Size.SMALL.value,
-        "border_radius": Size.DEFAULT.value,
-        "color": TextColor.HEADER.value,
-        "background_color": Color.CONTENT.value,
-        "white_space": "normal",
-        "text_align": "start",
+        "display": "flex",
+        "align_items": "center",
+        "justify_content": "start",
+        "gap": "16px",
+        "padding": Padding.LARGE.value,
+        "margin_bottom": Margin.MEDIUM.value,
+        "background_color": BackgroundColor.SURFACE.value,
+        "border": f"1px solid {BorderColor.DEFAULT.value}",
+        "border_radius": "12px",
+        "transition": "all 0.2s ease-in-out",
         "--cursor-button": "pointer",
-        "_hover": {"background_color": Color.SECONDARY.value},
+        "_hover": {
+            "background_color": BackgroundColor.SURFACE_HOVER.value,
+            "border_color": BorderColor.WHITE_TRANSPARENT.value,
+            "transform": "translateY(-2px)",
+        },
     },
     rx.link: {"color": TextColor.BODY.value, "text_decoration": "none", "_hover": {}},
 }
@@ -115,16 +124,10 @@ navbar_title_style = dict(
 )
 
 title_style = dict(
-    width="100%",
-    font_weight=FontWeight.MEDIUM.value,
+    color=Color.WHITE.value,
     font_size=FontSize.DEFAULT.value,
-    margin_bottom=Margin.LARGE.value,
-)
-
-button_title_style = dict(
-    font_family=Font.TITLE.value,
     font_weight=FontWeight.MEDIUM.value,
-    color=TextColor.HEADER.value,
+    margin_bottom=Margin.LARGE.value,
+    padding_bottom=Padding.MEDIUM.value,
+    width="100%",
 )
-
-button_body_style = dict(font_weight=FontWeight.LIGHT.value, color=TextColor.BODY.value)
