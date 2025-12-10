@@ -1,11 +1,10 @@
 import reflex as rx
 import website_frontend.constants.site_constants as const
 
-from website_frontend.styles.styles import Color, Spacing, Margin
+from website_frontend.styles.styles import Color, Spacing
 
 from website_frontend.components.link_featured import link_featured
 from website_frontend.components.link_button import link_button
-from website_frontend.components.title import title
 from website_frontend.components.section import section
 
 from website_frontend.components.ui.auto_scrolling_carousel import (
@@ -24,8 +23,8 @@ def links() -> rx.Component:
     return rx.vstack(
         rx.cond(
             PageState.featured_info,
-            rx.el.Section.create(
-                title("Proyectos Destacados"),
+            section(
+                "Proyectos Destacados",
                 auto_scrolling_carousel(
                     reactive_list=PageState.featured_info,
                     render_function=lambda featured: rx.flex(
@@ -41,8 +40,6 @@ def links() -> rx.Component:
                     direction="right",
                     speed="slow",
                 ),
-                width="100%",
-                margin_bottom=Margin.VERY_BIG.value,
             ),
         ),
         section(

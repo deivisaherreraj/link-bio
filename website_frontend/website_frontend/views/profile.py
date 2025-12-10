@@ -52,7 +52,7 @@ def profile(
             tagline,
             color=Color.WHITE.value,
             font_size=FontSize.MEDIUM.value,
-            font_weight=FontWeight.BOLD.value,
+            font_weight=FontWeight.MEDIUM.value,
             margin_bottom=Size.VERY_SMALL.value,
         ),
         # Tech stack description

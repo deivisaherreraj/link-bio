@@ -5,7 +5,7 @@ import website_frontend.constants.site_constants as site_const
 
 from website_frontend.styles.styles import Spacing, Padding, Margin
 from website_frontend.styles.colors import Color
-from website_frontend.styles.fonts import FontSize
+from website_frontend.styles.fonts import FontSize, FontWeight
 
 from website_frontend.components.info_text import info_text
 from website_frontend.components.link_button import link_button
@@ -79,9 +79,17 @@ def header(details=True) -> rx.Component:
                         soluciones de altos impacto, ofreciendo un desarrollo de software confiable y
                         eficiente, tanto del lado del
                         """,
-                        rx.text.strong("Back-End 💻", color=Color.WHITE.value),
+                        rx.text.strong(
+                            "Back-End 💻",
+                            color=Color.WHITE.value,
+                            font_weight=FontWeight.MEDIUM.value,
+                        ),
                         " como del ",
-                        rx.text.strong("Front-End 🌐", color=Color.WHITE.value),
+                        rx.text.strong(
+                            "Front-End 🌐",
+                            color=Color.WHITE.value,
+                            font_weight=FontWeight.MEDIUM.value,
+                        ),
                         """
                         . Estoy siempre listo para explorar nuevas ideas y hacer realidad proyectos emocionantes. Aquí
                         encontrarás mis trabajos, contacto y perfiles profesionales 🔗. 🚀¡Gracias por tu

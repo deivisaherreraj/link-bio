@@ -20,7 +20,7 @@ def link_button(
     is_external=True,
     animated=False,
 ) -> rx.Component:
-    class_name = "transition-all duration-200 "
+    class_name = ""
 
     # Animación opcional (animate.css)
     if animated:
@@ -73,6 +73,7 @@ def link_button(
                 display="flex",
                 align_items="center",
                 justify_content="center",
+                flex_shrink=0,
                 margin_right=Margin.LARGE.value,
                 border_radius="8px",
                 background_color=BackgroundColor.LIGHT.value,
@@ -94,10 +95,10 @@ def link_button(
                         rx.text(
                             badge,
                             font_size=FontSize.TINY.value,
-                            font_weight=FontWeight.BOLD.value,
+                            font_weight=FontWeight.MEDIUM.value,
                             color=Color.WHITE.value,
-                            padding=f"{Padding.VERY_SMALL.value} {Padding.VERY_SMALLER.value}",
-                            border_radius="8px",
+                            padding=f"{Padding.VERY_SMALL.value} {Padding.MEDIUM.value}",
+                            border_radius="6px",
                             line_height="1",
                             style={"backgroundColor": badge_color}
                             if badge_color
@@ -117,6 +118,8 @@ def link_button(
                     as_="span",
                 ),
                 flex_grow=1,
+                flex_shrink=1,
+                flex_basis="0%",
                 display="flex",
                 flex_direction="column",
                 text_align="left",

@@ -1,56 +1,42 @@
 import reflex as rx
 import datetime
-import website_frontend.constants.site_constants as const
 
-from website_frontend.styles.styles import Size, Spacing, Logo
-from website_frontend.styles.colors import Color, TextColor
+from website_frontend.styles.styles import Margin
+from website_frontend.styles.colors import Color
+from website_frontend.styles.fonts import FontSize, FontWeight
 
 
 def footer() -> rx.Component:
-    return rx.vstack(
-        rx.image(
-            src="/logo.png",
-            height=Logo.HEIGHT.value,
-            width=Logo.WIDTH.value,
-            alt="Logotipo de DHerreraJDev. Una doble > &quot;de&quot; _.",
-        ),
-        rx.link(
+    current_year = datetime.date.today().year
+
+    return rx.el.Footer.create(
+        rx.vstack(
             rx.box(
-                f"Copyright © 2023-{datetime.date.today().year} ",
-                rx.text(
-                    "DherrerajDev by Deivis Andres Herrera Julio",
-                    as_="span",
-                    color=Color.PRIMARY.value,
+                rx.el.I.create(
+                    class_name="fa-solid fa-code",
                 ),
-                padding_top=Size.DEFAULT.value,
-                color=TextColor.BODY.value,
+                font_size=FontSize.LARGE.value,
+                color=Color.WHITE.value,
+                margin_bottom=Margin.MEDIUM.value,
             ),
-            href=const.DHERRERAJDEV_URL,
-            is_external=True,
-            font_size=Size.MEDIUM.value,
-        ),
-        rx.link(
-            rx.hstack(
-                rx.image(
-                    src="/icons/github.svg",
-                    height=Size.LARGE.value,
-                    width=Size.LARGE.value,
-                    alt="Logo GitHub",
-                ),
-                rx.text(
-                    "INNOVACIÓN Y PASIÓN ♥ EN CADA LÍNEA DE CÓDIGO",
-                    font_size=Size.MEDIUM.value,
-                    margin_top=Size.ZERO.value,
-                    color=TextColor.BODY.value,
-                ),
+            rx.text(
+                f"Copyright © 2023-{current_year} Deivis Andres Herrera Julio",
+                color=Color.GRAY.value,
+                font_size=FontSize.TINY.value,
+                margin_bottom=Margin.SMALL.value,
+                as_="p",
             ),
-            href=const.REPO_URL,
-            is_external=True,
+            # Slogan in Spanish
+            rx.text(
+                "INNOVACIÓN Y PASIÓN ♥ EN CADA LÍNEA DE CÓDIGO",
+                color=Color.PRIMARY.value,
+                font_weight=FontWeight.MEDIUM.value,
+                font_size=FontSize.SMALL.value,
+                as_="p",
+            ),
+            align="center",
         ),
-        align="center",
-        margin_bottom=Size.BIG.value,
-        padding_bottom=Size.VERY_BIG.value,
-        padding_x=Size.BIG.value,
-        spacing=Spacing.ZERO.value,
-        color=TextColor.FOOTER.value,
+        margin_top=Margin.BIG.value,
+        margin_bottom=Margin.VERY_BIG.value,
+        width="100%",
     )
