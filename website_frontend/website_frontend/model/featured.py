@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
-from website_frontend.model.ProjectStatus import ProjectStatus
+from website_frontend.model.project_status import ProjectStatus
 
 
 class Featured(BaseModel):

@@ -16,7 +16,7 @@ from website_frontend.components.ui.direction_aware_hover import (
 
 from website_frontend.routes import Route
 
-from website_frontend.state.PageState import PageState
+from website_frontend.state.page_state import PageState
 
 
 def links() -> rx.Component:

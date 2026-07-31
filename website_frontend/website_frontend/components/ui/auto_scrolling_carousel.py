@@ -2,7 +2,7 @@ import reflex as rx
 
 from typing import Callable
 
-from website_frontend.model.Featured import Featured
+from website_frontend.model.featured import Featured
 
 
 def _animation_style(direction: str, speed: str) -> dict:

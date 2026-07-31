@@ -1,5 +1,6 @@
 import reflex as rx
-import website_frontend.utils as utils
+import website_frontend.shared.browser as browser
+import website_frontend.shared.meta as meta
 import website_frontend.styles.styles as styles
 
 from website_frontend.styles.styles import Margin
@@ -14,14 +15,14 @@ from website_frontend.routes import Route
 
 @rx.page(
     route=Route.INDEX.value,
-    title=utils.index_title,
-    description=utils.index_description,
-    image=utils.preview,
-    meta=utils.index_meta,
+    title=meta.index_title,
+    description=meta.index_description,
+    image=meta.preview,
+    meta=meta.index_meta,
 )
 def index() -> rx.Component:
     return rx.box(
-        utils.lang(),
+        browser.lang(),
         navbar(),
         rx.center(
             rx.vstack(

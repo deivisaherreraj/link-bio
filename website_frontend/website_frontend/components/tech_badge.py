@@ -4,7 +4,7 @@ from website_frontend.styles.styles import Spacing
 from website_frontend.styles.colors import Color
 from website_frontend.styles.fonts import FontWeight
 
-from website_frontend.model.TechBadge import TechBadge
+from website_frontend.model.tech_badge import TechBadge
 
 
 def tech_badge(technologie: TechBadge) -> rx.Component:

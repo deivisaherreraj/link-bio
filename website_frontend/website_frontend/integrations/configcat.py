@@ -16,8 +16,15 @@ class ConfigCatAPI:
             self.configcat = configcatclient.get(self.CONFIGCAT_SDK_KEY)
 
     def schedule(self) -> dict:
+        if not hasattr(self, "configcat"):
+            return {}
+
         response = self.configcat.get_value("live_schedule", "")
-        return json.loads(str(response))
+
+        try:
+            return json.loads(str(response))
+        except json.JSONDecodeError:
+            return {}
 
     def avatar_status(self) -> str:
         """

@@ -7,9 +7,9 @@ from website_frontend.styles.fonts import FontSize, FontWeight
 from website_frontend.components.avatar_with_status import avatar_with_status
 from website_frontend.components.tech_badge import tech_badge
 
-from website_frontend.model.AvatarStatus import AvatarStatus
+from website_frontend.model.avatar_status import AvatarStatus
 
-from website_frontend.state.PageState import PageState
+from website_frontend.state.page_state import PageState
 
 
 def profile(

@@ -12,7 +12,7 @@ from website_frontend.components.link_button import link_button
 
 from website_frontend.views.profile import profile
 
-from website_frontend.state.PageState import PageState
+from website_frontend.state.page_state import PageState
 
 
 def header(details=True) -> rx.Component:

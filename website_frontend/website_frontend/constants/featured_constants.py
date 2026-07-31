@@ -1,5 +1,6 @@
 from typing import Dict
-from website_frontend.model.ProjectStatus import ProjectStatus
+
+from website_frontend.model.project_status import ProjectStatus
 
 # Mapeo de estados del proyecto (colores y animaciones)
 PROJECT_STATUS_CONFIG: Dict[str, ProjectStatus] = {
