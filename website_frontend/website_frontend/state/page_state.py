@@ -42,10 +42,10 @@ class PageState(rx.State):
         if self.timezone == "":
             return rx.call_script(
                 LOCAL_TIMEZONE_SCRIPT,
-                PageState.update_timezone,
+                PageState.update_timezone,  # type: ignore[operator]
             )
         else:
-            await self.update_timezone(self.timezone)
+            await self.update_timezone(self.timezone)  # type: ignore[operator]
 
     @rx.event
     async def update_timezone(self, timezone: str):
