@@ -41,6 +41,9 @@ class SupabaseAPI:
         return []
 
     def featured(self) -> list[Featured]:
+        if not hasattr(self, "supabase"):
+            return []
+
         response = (
             self.supabase.table("featured")
             .select("*")
