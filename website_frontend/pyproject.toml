@@ -52,7 +52,6 @@ explicit_package_bases = true
 
 [[tool.mypy.overrides]]
 module = [
-    "website_frontend.integrations.*",
     "website_frontend.state.*",
     "tests.integrations.*",
 ]

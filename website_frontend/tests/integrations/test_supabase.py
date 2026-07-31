@@ -1,41 +1,43 @@
+from collections.abc import Mapping
+from typing import Any
+
 import website_frontend.constants.featured_constants as featured_const
 from website_frontend.integrations.supabase import SupabaseAPI
 
 
 class StubExecuteResult:
-    def __init__(self, data: list[dict]) -> None:
+    def __init__(self, data: list[Mapping[str, Any]]) -> None:
         self.data = data
 
 
 class StubTableQuery:
-    def __init__(self, data: list[dict]) -> None:
+    def __init__(self, data: list[Mapping[str, Any]]) -> None:
         self.data = data
         self.calls: list[tuple[str, object]] = []
 
-    def select(self, value: str):
+    def select(self, value: str) -> "StubTableQuery":
         self.calls.append(("select", value))
         return self
 
-    def order(self, column: str, desc: bool = False):
+    def order(self, column: str, desc: bool = False) -> "StubTableQuery":
         self.calls.append(("order", (column, desc)))
         return self
 
-    def limit(self, value: int):
+    def limit(self, value: int) -> "StubTableQuery":
         self.calls.append(("limit", value))
         return self
 
-    def execute(self):
+    def execute(self) -> StubExecuteResult:
         self.calls.append(("execute", None))
         return StubExecuteResult(self.data)
 
 
 class StubSupabaseClient:
-    def __init__(self, data: list[dict]) -> None:
-        self.data = data
+    def __init__(self, data: list[Mapping[str, Any]]) -> None:
         self.tables: list[str] = []
         self.query = StubTableQuery(data)
 
-    def table(self, name: str):
+    def table(self, name: str) -> StubTableQuery:
         self.tables.append(name)
         return self.query
 
@@ -66,7 +68,7 @@ def test_featured_returns_empty_list_when_client_is_missing():
 
 
 def test_featured_maps_rows_and_uses_default_status_for_unknown_values():
-    rows = [
+    rows: list[Mapping[str, Any]] = [
         {
             "href": "https://example.com/project",
             "image_url": "https://example.com/project.png",
@@ -79,7 +81,7 @@ def test_featured_maps_rows_and_uses_default_status_for_unknown_values():
         }
     ]
     api = SupabaseAPI()
-    api.supabase = StubSupabaseClient(rows)
+    api.supabase = StubSupabaseClient(rows)  # type: ignore[assignment]
 
     result = api.featured()
 

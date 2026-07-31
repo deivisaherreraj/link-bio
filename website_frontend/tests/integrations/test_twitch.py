@@ -1,12 +1,14 @@
+from typing import Any
+
 from website_frontend.integrations import twitch
 
 
 class StubResponse:
-    def __init__(self, status_code: int, payload: dict) -> None:
+    def __init__(self, status_code: int, payload: dict[str, Any]) -> None:
         self.status_code = status_code
         self.payload = payload
 
-    def json(self) -> dict:
+    def json(self) -> dict[str, Any]:
         return self.payload
 
 

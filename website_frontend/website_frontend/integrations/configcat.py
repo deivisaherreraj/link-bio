@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Any
 
 import configcatclient
 import dotenv
@@ -16,16 +17,22 @@ class ConfigCatAPI:
         if self.CONFIGCAT_SDK_KEY is not None:
             self.configcat = configcatclient.get(self.CONFIGCAT_SDK_KEY)
 
-    def schedule(self) -> dict:
+    def _get_config_value(self, key: str, default: str) -> str:
         if not hasattr(self, "configcat"):
-            return {}
+            return default
 
-        response = self.configcat.get_value("live_schedule", "")
+        response: Any = self.configcat.get_value(key, default)
+        return str(response)
+
+    def schedule(self) -> dict:
+        response = self._get_config_value("live_schedule", "")
 
         try:
-            return json.loads(str(response))
+            parsed = json.loads(response)
         except json.JSONDecodeError:
             return {}
+
+        return parsed if isinstance(parsed, dict) else {}
 
     def avatar_status(self) -> str:
         """
@@ -38,15 +45,12 @@ class ConfigCatAPI:
         - lower
         """
         # Si no hay SDK o flag, devolvemos 'activo' por defecto.
-        if not hasattr(self, "configcat"):
-            return site_const.AVAILABILITY_STATUS_DEFAULT
-
-        response = self.configcat.get_value(
+        response = self._get_config_value(
             "profile_availability_status",
             site_const.AVAILABILITY_STATUS_DEFAULT,
         )
 
         # Aseguramos string y normalizamos lo básico
-        value = str(response).strip().strip('"').strip("'").lower()
+        value = response.strip().strip('"').strip("'").lower()
 
         return value

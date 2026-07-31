@@ -1,4 +1,5 @@
 import os
+from collections.abc import Mapping
 
 import dotenv
 from supabase import Client, create_client
@@ -17,7 +18,7 @@ class SupabaseAPI:
         if self.SUPABASE_URL is not None and self.SUPABASE_KEY is not None:
             self.supabase: Client = create_client(self.SUPABASE_URL, self.SUPABASE_KEY)
 
-    def _normalize_technologies(self, raw_value) -> list[str]:
+    def _normalize_technologies(self, raw_value: object) -> list[str]:
         """
         Normaliza el campo 'technologies' desde Supabase a List[str].
 
@@ -40,6 +41,16 @@ class SupabaseAPI:
         # Cualquier otro tipo, se ignora
         return []
 
+    def _get_string(self, payload: Mapping[str, object], key: str) -> str:
+        value = payload.get(key)
+        return value if isinstance(value, str) else ""
+
+    def _get_optional_string(
+        self, payload: Mapping[str, object], key: str
+    ) -> str | None:
+        value = payload.get(key)
+        return value if isinstance(value, str) else None
+
     def featured(self) -> list[Featured]:
         if not hasattr(self, "supabase"):
             return []
@@ -56,6 +67,10 @@ class SupabaseAPI:
 
         if len(response.data) > 0:
             for featured_item in response.data:
+                if not isinstance(featured_item, Mapping):
+                    continue
+
+                featured_item = dict(featured_item)
                 technologies = self._normalize_technologies(
                     featured_item.get("technologies")
                 )
@@ -78,13 +93,15 @@ class SupabaseAPI:
 
                 featured_data.append(
                     Featured(
-                        href=featured_item.get("href"),
-                        image_url=featured_item.get("image_url"),
-                        title=featured_item.get("title", ""),
-                        description=featured_item.get("description", None),
+                        href=self._get_string(featured_item, "href"),
+                        image_url=self._get_string(featured_item, "image_url"),
+                        title=self._get_string(featured_item, "title"),
+                        description=self._get_optional_string(
+                            featured_item, "description"
+                        ),
                         technologies=technologies,
-                        github_url=featured_item.get("github_url"),
-                        live_url=featured_item.get("live_url"),
+                        github_url=self._get_string(featured_item, "github_url"),
+                        live_url=self._get_string(featured_item, "live_url"),
                         status=status_config,
                     )
                 )

@@ -69,3 +69,12 @@ def test_schedule_returns_empty_dict_for_invalid_json_payload():
 
     assert result == {}
     assert configcat_api.configcat.calls == [("live_schedule", "")]
+
+
+def test_schedule_returns_empty_dict_for_non_mapping_json_payload():
+    configcat_api = ConfigCatAPI()
+    configcat_api.configcat = StubConfigCatClient({"live_schedule": '["18:00"]'})
+
+    result = configcat_api.schedule()
+
+    assert result == {}
