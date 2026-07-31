@@ -101,3 +101,27 @@ def test_featured_maps_rows_and_uses_default_status_for_unknown_values():
         ("limit", 4),
         ("execute", None),
     ]
+
+
+def test_featured_maps_blank_optional_fields_to_none():
+    rows: list[Mapping[str, Any]] = [
+        {
+            "href": "https://example.com/project",
+            "image_url": "https://example.com/project.png",
+            "title": "Example Project",
+            "description": "   ",
+            "technologies": ["Python"],
+            "github_url": " ",
+            "live_url": None,
+            "status": "production",
+        }
+    ]
+    api = SupabaseAPI()
+    api.supabase = StubSupabaseClient(rows)  # type: ignore[assignment]
+
+    result = api.featured()
+
+    assert len(result) == 1
+    assert result[0].description is None
+    assert result[0].github_url is None
+    assert result[0].live_url is None

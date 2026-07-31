@@ -49,7 +49,11 @@ class SupabaseAPI:
         self, payload: Mapping[str, object], key: str
     ) -> str | None:
         value = payload.get(key)
-        return value if isinstance(value, str) else None
+        if not isinstance(value, str):
+            return None
+
+        normalized = value.strip()
+        return normalized if normalized else None
 
     def featured(self) -> list[Featured]:
         if not hasattr(self, "supabase"):
@@ -100,8 +104,12 @@ class SupabaseAPI:
                             featured_item, "description"
                         ),
                         technologies=technologies,
-                        github_url=self._get_string(featured_item, "github_url"),
-                        live_url=self._get_string(featured_item, "live_url"),
+                        github_url=self._get_optional_string(
+                            featured_item, "github_url"
+                        ),
+                        live_url=self._get_optional_string(
+                            featured_item, "live_url"
+                        ),
                         status=status_config,
                     )
                 )

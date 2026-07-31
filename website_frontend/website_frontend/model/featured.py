@@ -11,6 +11,6 @@ class Featured(BaseModel):
     title: str
     description: Optional[str] = None
     technologies: List[str] = []
-    github_url: str
-    live_url: str
+    github_url: Optional[str] = None
+    live_url: Optional[str] = None
     status: ProjectStatus
