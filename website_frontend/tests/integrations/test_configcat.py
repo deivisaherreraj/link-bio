@@ -1,7 +1,6 @@
 import json
 
 import website_frontend.constants.site_constants as site_const
-
 from website_frontend.integrations.configcat import ConfigCatAPI
 
 

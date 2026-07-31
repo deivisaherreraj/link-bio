@@ -1,7 +1,6 @@
 from website_frontend.integrations.configcat import ConfigCatAPI
 from website_frontend.shared.datetime_utils import next_date
 
-
 CONFIGCAT_API = ConfigCatAPI()
 
 

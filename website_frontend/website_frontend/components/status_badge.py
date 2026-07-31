@@ -1,9 +1,8 @@
 import reflex as rx
 
-from website_frontend.styles.styles import Padding
-from website_frontend.styles.fonts import FontSize, FontWeight
-
 from website_frontend.model.project_status import ProjectStatus
+from website_frontend.styles.fonts import FontSize, FontWeight
+from website_frontend.styles.styles import Padding
 
 
 def status_badge(status_info: ProjectStatus) -> rx.Component:

@@ -1,22 +1,18 @@
 import reflex as rx
+
 import website_frontend.constants.site_constants as const
-
-from website_frontend.styles.styles import Color, Spacing
-
-from website_frontend.components.link_featured import link_featured
 from website_frontend.components.link_button import link_button
+from website_frontend.components.link_featured import link_featured
 from website_frontend.components.section import section
-
 from website_frontend.components.ui.auto_scrolling_carousel import (
     auto_scrolling_carousel,
 )
 from website_frontend.components.ui.direction_aware_hover import (
     direction_aware_hover,
 )
-
 from website_frontend.routes import Route
-
 from website_frontend.state.page_state import PageState
+from website_frontend.styles.styles import Color, Spacing
 
 
 def links() -> rx.Component:
@@ -47,7 +43,9 @@ def links() -> rx.Component:
             link_button(
                 href=const.WORKANA_URL,
                 title="Workana",
-                description="Perfil donde ofrezco mis servicios profesionales de desarrollo.",
+                description=(
+                    "Perfil donde ofrezco mis servicios profesionales de desarrollo."
+                ),
                 icon="fa-solid fa-briefcase",
                 icon_color=Color.WHITE.value,
                 badge="Freelance",
@@ -56,7 +54,10 @@ def links() -> rx.Component:
             link_button(
                 href=const.GUMROAD_URL,
                 title="Gumroad",
-                description="Tienda de recursos, plantillas y cursos sobre desarrollo Full-Stack.",
+                description=(
+                    "Tienda de recursos, plantillas y cursos sobre desarrollo "
+                    "Full-Stack."
+                ),
                 icon="fa-solid fa-store",
                 icon_color=Color.WHITE.value,
                 badge="Productos digitales",
@@ -94,7 +95,9 @@ def links() -> rx.Component:
             link_button(
                 href=Route.BLOG.value,
                 title="Mi Blog (Artículos Técnicos)",
-                description="Publicaciones sobre arquitectura, patrones de diseño y Full-Stack.",
+                description=(
+                    "Publicaciones sobre arquitectura, patrones de diseño y Full-Stack."
+                ),
                 icon="fa-solid fa-newspaper",
                 icon_color=Color.WHITE.value,
                 badge="Featured",
@@ -121,7 +124,9 @@ def links() -> rx.Component:
             link_button(
                 href=const.COFFEE_URL,
                 title="Invítame a un café",
-                description="Apoya mi contenido y desarrollo con una pequeña contribución.",
+                description=(
+                    "Apoya mi contenido y desarrollo con una pequeña contribución."
+                ),
                 icon="fa-solid fa-mug-hot",
                 icon_color=Color.WHITE.value,
                 badge="Apoyo",
@@ -133,7 +138,9 @@ def links() -> rx.Component:
             link_button(
                 href=const.MYPUBLICINBOX_URL,
                 title="My Public Inbox",
-                description="Para consultas rápidas y profesionales con prioridad de respuesta.",
+                description=(
+                    "Para consultas rápidas y profesionales con prioridad de respuesta."
+                ),
                 icon="fa-solid fa-inbox",
                 icon_color=Color.WHITE.value,
                 badge="Directo",

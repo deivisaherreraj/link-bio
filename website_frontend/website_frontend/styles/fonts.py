@@ -4,7 +4,10 @@ from enum import Enum
 class Font(Enum):
     DEFAULT = "Poppins"
     TITLE = "Poppins"
-    LOGO = "ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace"
+    LOGO = (
+        "ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"
+        "Liberation Mono,Courier New,monospace"
+    )
 
 
 class FontSize(Enum):

@@ -1,7 +1,5 @@
 from datetime import datetime
 
-import pytz
-
 from website_frontend.shared import datetime_utils
 
 

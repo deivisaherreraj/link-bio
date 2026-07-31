@@ -1,9 +1,9 @@
 import reflex as rx
-import website_frontend.styles.styles as styles
 
-from website_frontend.styles.styles import Margin, Size, Padding
-from website_frontend.styles.colors import Color, BackgroundColor
+import website_frontend.styles.styles as styles
+from website_frontend.styles.colors import BackgroundColor, Color
 from website_frontend.styles.fonts import FontSize, FontWeight
+from website_frontend.styles.styles import Margin, Padding, Size
 
 
 def link_button(
@@ -97,7 +97,9 @@ def link_button(
                             font_size=FontSize.TINY.value,
                             font_weight=FontWeight.MEDIUM.value,
                             color=Color.WHITE.value,
-                            padding=f"{Padding.VERY_SMALL.value} {Padding.MEDIUM.value}",
+                            padding=(
+                                f"{Padding.VERY_SMALL.value} {Padding.MEDIUM.value}"
+                            ),
                             border_radius="6px",
                             line_height="1",
                             style={"backgroundColor": badge_color}

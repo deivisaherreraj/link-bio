@@ -1,7 +1,7 @@
 import reflex as rx
 
-from website_frontend.styles.fonts import FontSize, FontWeight
 from website_frontend.styles.colors import Color
+from website_frontend.styles.fonts import FontSize, FontWeight
 
 
 def info_text(title: str, subTitle: str) -> rx.Component:

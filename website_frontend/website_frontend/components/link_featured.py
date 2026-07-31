@@ -1,10 +1,9 @@
 import reflex as rx
 
-from website_frontend.styles.styles import Spacing, Color, Padding, Margin
-from website_frontend.styles.fonts import FontSize, FontWeight
-
 from website_frontend.components.status_badge import status_badge
 from website_frontend.model.featured import Featured
+from website_frontend.styles.fonts import FontSize, FontWeight
+from website_frontend.styles.styles import Color, Margin, Padding, Spacing
 
 
 def link_featured(featured: Featured) -> rx.Component:

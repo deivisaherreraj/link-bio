@@ -1,7 +1,7 @@
 import reflex as rx
+
 import website_frontend.shared.browser as browser
 import website_frontend.shared.meta as meta
-
 from website_frontend.routes import Route
 from website_frontend.styles.colors import TextColor
 

@@ -1,9 +1,9 @@
 import os
+
 import dotenv
+from supabase import Client, create_client
+
 import website_frontend.constants.featured_constants as featured_const
-
-from supabase import create_client, Client
-
 from website_frontend.model.featured import Featured
 
 

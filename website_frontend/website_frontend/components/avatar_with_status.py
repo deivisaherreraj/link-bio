@@ -1,8 +1,7 @@
 import reflex as rx
 
-from website_frontend.styles.styles import Spacing, Radius
-
 from website_frontend.model.avatar_status import AvatarStatus
+from website_frontend.styles.styles import Radius, Spacing
 
 
 def avatar_with_status(

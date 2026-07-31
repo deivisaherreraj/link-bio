@@ -1,6 +1,6 @@
-import reflex as rx
-
 from typing import Callable
+
+import reflex as rx
 
 from website_frontend.model.featured import Featured
 

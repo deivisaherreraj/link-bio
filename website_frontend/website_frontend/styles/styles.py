@@ -1,7 +1,8 @@
+from enum import Enum
+
 import reflex as rx
 
-from enum import Enum
-from .colors import Color, TextColor, BackgroundColor, BorderColor
+from .colors import BackgroundColor, BorderColor, Color, TextColor
 from .fonts import Font, FontSize, FontWeight
 
 # Constants

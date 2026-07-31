@@ -16,9 +16,44 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "mypy>=1.18.1",
     "pytest>=8.4.1",
+    "ruff>=0.13.0",
 ]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.mypy]
+python_version = "3.12"
+files = [
+    "website_frontend",
+    "tests",
+]
+exclude = [
+    "website_frontend/components/",
+    "website_frontend/pages/",
+    "website_frontend/views/",
+    "website_frontend/styles/",
+    "website_frontend/website_frontend.py",
+]
+ignore_missing_imports = true
+check_untyped_defs = true
+warn_unused_configs = true
+explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+module = [
+    "website_frontend.integrations.*",
+    "website_frontend.state.*",
+    "tests.integrations.*",
+]
+ignore_errors = true

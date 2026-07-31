@@ -1,7 +1,6 @@
 from website_frontend.integrations.twitch import TwitchAPI
 from website_frontend.model.live import Live
 
-
 TWITCH_API = TwitchAPI()
 
 

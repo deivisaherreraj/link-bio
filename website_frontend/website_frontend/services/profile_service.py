@@ -1,10 +1,8 @@
 import website_frontend.constants.profile_constants as profile_const
 import website_frontend.constants.site_constants as site_const
-
 from website_frontend.integrations.configcat import ConfigCatAPI
 from website_frontend.model.avatar_status import AvatarStatus
 from website_frontend.model.tech_badge import TechBadge
-
 
 CONFIGCAT_API = ConfigCatAPI()
 

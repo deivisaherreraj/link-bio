@@ -1,7 +1,8 @@
 import os
+import time
+
 import dotenv
 import requests
-import time
 
 from website_frontend.model.live import Live
 

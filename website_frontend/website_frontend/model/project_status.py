@@ -1,11 +1,13 @@
-from pydantic import BaseModel
 from typing import Optional
+
+from pydantic import BaseModel
 
 
 class ProjectStatus(BaseModel):
     """
     Modelo para representar el estado visual de un proyecto destacado.
-    Sirve como “API” de configuración que en el futuro podrá venir de Supabase u otro origen.
+    Sirve como “API” de configuración que en el futuro podrá venir de Supabase
+    u otro origen.
     """
 
     key: str

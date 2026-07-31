@@ -1,6 +1,5 @@
 import reflex as rx
 
-
 LOCAL_TIMEZONE_SCRIPT = "Intl.DateTimeFormat().resolvedOptions().timeZone"
 
 

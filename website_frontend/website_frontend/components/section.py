@@ -1,8 +1,7 @@
 import reflex as rx
 
-from website_frontend.styles.styles import Margin
-
 from website_frontend.components.title import title
+from website_frontend.styles.styles import Margin
 
 
 def section(head: str, *children: rx.Component) -> rx.Component:

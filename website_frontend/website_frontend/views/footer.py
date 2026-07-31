@@ -1,9 +1,10 @@
-import reflex as rx
 import datetime
 
-from website_frontend.styles.styles import Margin
+import reflex as rx
+
 from website_frontend.styles.colors import Color
 from website_frontend.styles.fonts import FontSize, FontWeight
+from website_frontend.styles.styles import Margin
 
 
 def footer() -> rx.Component:

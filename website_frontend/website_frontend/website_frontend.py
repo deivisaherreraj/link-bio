@@ -1,4 +1,5 @@
 import reflex as rx
+
 import website_frontend.constants.site_constants as const
 import website_frontend.styles.styles as styles
 
@@ -6,10 +7,6 @@ import website_frontend.styles.styles as styles
 from website_frontend.api.api import fastapi_app
 
 # Importa las páginas de la aplicación
-from website_frontend.pages.index import index
-from website_frontend.pages.courses import courses
-from website_frontend.pages.blog import blog
-from website_frontend.pages.blog_article import blog_article
 
 # Google tag (gtag.js)
 app = rx.App(

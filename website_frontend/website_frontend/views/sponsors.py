@@ -1,9 +1,9 @@
 import reflex as rx
-import website_frontend.constants.site_constants as const
 
-from website_frontend.styles.styles import Spacing
-from website_frontend.components.title import title
+import website_frontend.constants.site_constants as const
 from website_frontend.components.link_sponsor import link_sponsor
+from website_frontend.components.title import title
+from website_frontend.styles.styles import Spacing
 
 
 def sponsors() -> rx.Component:

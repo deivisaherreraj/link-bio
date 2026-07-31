@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from website_frontend.model.live import Live
 from website_frontend.model.featured import Featured
+from website_frontend.model.live import Live
 from website_frontend.services.featured_service import get_featured_projects
 from website_frontend.services.live_service import get_live_status
 from website_frontend.services.profile_service import get_avatar_status_key

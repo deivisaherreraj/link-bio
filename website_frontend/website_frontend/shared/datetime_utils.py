@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 
 import pytz
 
-
 WEEKDAYS = {
     0: "Lunes",
     1: "Martes",
@@ -64,9 +63,11 @@ def next_date(dates: dict, timezone: str) -> str:
 
             day = "Hoy" if weekday == 0 else WEEKDAYS[local_date.weekday()]
             zones = timezone.replace("_", " ").split("/")
+            timezone_label = zones[len(zones) - 1]
 
             return local_date.strftime(
-                f"{day}, %d de {MONTHS[local_date.month]} a las %H:%M | Zona horaria: {zones[len(zones) - 1]}"
+                f"{day}, %d de {MONTHS[local_date.month]} a las %H:%M | "
+                f"Zona horaria: {timezone_label}"
             )
 
     return ""

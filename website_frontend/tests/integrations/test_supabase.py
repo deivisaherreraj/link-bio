@@ -1,5 +1,4 @@
 import website_frontend.constants.featured_constants as featured_const
-
 from website_frontend.integrations.supabase import SupabaseAPI
 
 
@@ -87,9 +86,12 @@ def test_featured_maps_rows_and_uses_default_status_for_unknown_values():
     assert len(result) == 1
     assert result[0].title == "Example Project"
     assert result[0].technologies == ["Python", "Reflex"]
-    assert result[0].status == featured_const.PROJECT_STATUS_CONFIG[
-        featured_const.DEFAULT_PROJECT_STATUS_KEY
-    ]
+    assert (
+        result[0].status
+        == featured_const.PROJECT_STATUS_CONFIG[
+            featured_const.DEFAULT_PROJECT_STATUS_KEY
+        ]
+    )
     assert api.supabase.tables == ["featured"]
     assert api.supabase.query.calls == [
         ("select", "*"),

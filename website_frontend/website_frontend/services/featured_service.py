@@ -1,7 +1,6 @@
 from website_frontend.integrations.supabase import SupabaseAPI
 from website_frontend.model.featured import Featured
 
-
 SUPABASE_API = SupabaseAPI()
 
 

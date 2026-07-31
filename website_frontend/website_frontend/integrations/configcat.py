@@ -1,7 +1,8 @@
-import os
-import dotenv
-import configcatclient
 import json
+import os
+
+import configcatclient
+import dotenv
 
 import website_frontend.constants.site_constants as site_const
 

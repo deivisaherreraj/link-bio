@@ -8,7 +8,10 @@ _meta = [
 ]
 
 index_title = "DHerreraJDev | Desarrollo de software Full-Stack"
-index_description = "Hola, mi nombre es Deivis Andres Herrera Julio. Soy ingeniero de software, desarrollador Full-Stack."
+index_description = (
+    "Hola, mi nombre es Deivis Andres Herrera Julio. Soy ingeniero de "
+    "software, desarrollador Full-Stack."
+)
 index_meta = [
     {"name": "og:title", "content": index_title},
     {"name": "og:description", "content": index_description},
@@ -16,7 +19,10 @@ index_meta = [
 ]
 
 courses_title = "DHerreraJDev | Guías/Tutoriales gratis de programación"
-courses_description = "Este es un listado con algunas guías y tutoriales para aprender programación y desarrollo de software."
+courses_description = (
+    "Este es un listado con algunas guías y tutoriales para aprender "
+    "programación y desarrollo de software."
+)
 courses_meta = [
     {"name": "og:title", "content": courses_title},
     {"name": "og:description", "content": courses_description},
