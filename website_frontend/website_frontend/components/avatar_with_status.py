@@ -14,7 +14,7 @@ def avatar_with_status(
     return rx.box(
         # Avatar
         rx.avatar(
-            name={name},
+            name=name,
             size=Spacing.MEDIUM_BIG.value,
             radius=Radius.FULL.value,
             src=avatar_url,
