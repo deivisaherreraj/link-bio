@@ -21,7 +21,7 @@ def test_build_avatar_status_normalizes_input():
 def test_build_avatar_status_falls_back_for_unknown_key():
     result = profile_service.build_avatar_status("desconocido")
 
-    assert result.key == "desconocido"
+    assert result.key == "activo"
     assert result.class_name == "is-active"
 
 

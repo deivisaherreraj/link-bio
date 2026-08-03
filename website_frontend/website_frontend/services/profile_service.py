@@ -7,11 +7,12 @@ from website_frontend.model.tech_badge import TechBadge
 CONFIGCAT_API = ConfigCatAPI()
 
 
-def _resolve_avatar_state(key: str) -> dict[str, str]:
-    return profile_const.AVAILABILITY_STATES.get(
-        key,
-        profile_const.AVAILABILITY_STATES[site_const.AVAILABILITY_STATUS_DEFAULT],
-    )
+def _resolve_avatar_state(key: str) -> tuple[str, dict[str, str]]:
+    if key in profile_const.AVAILABILITY_STATES:
+        return key, profile_const.AVAILABILITY_STATES[key]
+
+    default_key = site_const.AVAILABILITY_STATUS_DEFAULT
+    return default_key, profile_const.AVAILABILITY_STATES[default_key]
 
 
 def get_default_avatar_status() -> AvatarStatus:
@@ -23,10 +24,10 @@ def get_avatar_status_key() -> str:
 
 
 def build_avatar_status(raw_key: str) -> AvatarStatus:
-    key = str(raw_key).strip().strip('"').strip("'").lower()
-    state = _resolve_avatar_state(key)
+    normalized_key = str(raw_key).strip().strip('"').strip("'").lower()
+    resolved_key, state = _resolve_avatar_state(normalized_key)
     return AvatarStatus(
-        key=key,
+        key=resolved_key,
         text=state["text"],
         class_name=state["class_name"],
         icon=state["icon"],
