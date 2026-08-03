@@ -8,11 +8,31 @@ CONFIGCAT_API = ConfigCatAPI()
 
 
 def _resolve_avatar_state(key: str) -> tuple[str, dict[str, str]]:
-    if key in profile_const.AVAILABILITY_STATES:
-        return key, profile_const.AVAILABILITY_STATES[key]
-
     default_key = site_const.AVAILABILITY_STATUS_DEFAULT
-    return default_key, profile_const.AVAILABILITY_STATES[default_key]
+    default_state = profile_const.AVAILABILITY_STATES[default_key]
+
+    candidate = profile_const.AVAILABILITY_STATES.get(key)
+    if not isinstance(candidate, dict):
+        return default_key, default_state
+
+    text = candidate.get("text")
+    class_name = candidate.get("class_name")
+    icon = candidate.get("icon")
+
+    if not isinstance(text, str) or not text.strip():
+        return default_key, default_state
+
+    if not isinstance(class_name, str) or not class_name.strip():
+        return default_key, default_state
+
+    if not isinstance(icon, str) or not icon.strip():
+        return default_key, default_state
+
+    return key, {
+        "text": text.strip(),
+        "class_name": class_name.strip(),
+        "icon": icon.strip(),
+    }
 
 
 def get_default_avatar_status() -> AvatarStatus:

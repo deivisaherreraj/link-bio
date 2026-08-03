@@ -79,3 +79,20 @@ def test_get_profile_technologies_skips_invalid_entries(monkeypatch):
     assert result[0].name == "Angular"
     assert result[0].color == "#DD0031"
     assert result[0].icon_class == "fa-angular"
+
+
+def test_build_avatar_status_falls_back_for_incomplete_catalog_entry(monkeypatch):
+    monkeypatch.setitem(
+        profile_service.profile_const.AVAILABILITY_STATES,
+        "consultoria",
+        {
+            "text": "",
+            "class_name": "is-consulting",
+            "icon": "fa-laptop-code",
+        },
+    )
+
+    result = profile_service.build_avatar_status("consultoria")
+
+    assert result.key == "activo"
+    assert result.class_name == "is-active"
