@@ -3,6 +3,7 @@ from typing import Any
 
 import website_frontend.constants.featured_constants as featured_const
 from website_frontend.integrations.supabase import SupabaseAPI
+from website_frontend.model.featured import Featured
 
 
 class StubExecuteResult:
@@ -189,3 +190,27 @@ def test_featured_skips_rows_missing_required_contract_fields():
     assert result[0].href == "https://example.com/valid-project"
     assert result[0].image_url == "https://example.com/valid-project.png"
     assert result[0].title == "Valid Project"
+
+
+def test_featured_technologies_default_list_is_not_shared():
+    featured_a = Featured(
+        href="https://example.com/a",
+        image_url="https://example.com/a.png",
+        title="A",
+        status=featured_const.PROJECT_STATUS_CONFIG[
+            featured_const.DEFAULT_PROJECT_STATUS_KEY
+        ],
+    )
+    featured_b = Featured(
+        href="https://example.com/b",
+        image_url="https://example.com/b.png",
+        title="B",
+        status=featured_const.PROJECT_STATUS_CONFIG[
+            featured_const.DEFAULT_PROJECT_STATUS_KEY
+        ],
+    )
+
+    featured_a.technologies.append("Python")
+
+    assert featured_a.technologies == ["Python"]
+    assert featured_b.technologies == []

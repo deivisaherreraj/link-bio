@@ -38,6 +38,8 @@ def test_link_featured_renders_optional_actions_when_present() -> None:
     assert "https://example.com/live" in rendered
     assert "Ver proyecto en vivo" in rendered
     assert "En Producci\\u00f3n" in rendered
+    assert '"padingY"' not in rendered
+    assert '"paddingTop"' in rendered
 
 
 def test_link_featured_hides_optional_actions_when_links_are_missing() -> None:

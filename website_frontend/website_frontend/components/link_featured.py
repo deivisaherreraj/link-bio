@@ -53,7 +53,7 @@ def link_featured(featured: Featured) -> rx.Component:
                     featured.technologies,
                     lambda tech: rx.text(
                         tech,
-                        pading_y=Padding.SMALL.value,
+                        padding_y=Padding.SMALL.value,
                         padding_x=Padding.DEFAULT.value,
                         font_size=FontSize.TINY.value,
                         color=Color.WHITE.value,

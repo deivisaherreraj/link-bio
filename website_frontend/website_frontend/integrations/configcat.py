@@ -6,28 +6,13 @@ from typing import Any, TypeGuard
 import configcatclient
 import dotenv
 
+import website_frontend.constants.profile_constants as profile_const
 import website_frontend.constants.site_constants as site_const
 from website_frontend.shared.schedule_types import LiveSchedule, WeekdayKey
 
 
 def _is_weekday_key(value: object) -> TypeGuard[WeekdayKey]:
     return isinstance(value, str) and value in {"0", "1", "2", "3", "4", "5", "6"}
-
-
-def _is_valid_avatar_status_key(value: object) -> TypeGuard[str]:
-    return isinstance(value, str) and value in {
-        "activo",
-        "pausado",
-        "no-disponible",
-        "empleo",
-        "consultoria",
-        "tiempo-completo",
-        "aprendizaje",
-        "viajando",
-        "mantenimiento",
-        "transmisión",
-        "enfoque",
-    }
 
 
 class ConfigCatAPI:
@@ -101,7 +86,7 @@ class ConfigCatAPI:
         # Aseguramos string y normalizamos lo básico
         value = response.strip().strip('"').strip("'").lower()
 
-        if _is_valid_avatar_status_key(value):
+        if value in profile_const.AVAILABILITY_STATES:
             return value
 
         return site_const.AVAILABILITY_STATUS_DEFAULT
