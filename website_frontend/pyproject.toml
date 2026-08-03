@@ -52,6 +52,8 @@ explicit_package_bases = true
 
 [[tool.mypy.overrides]]
 module = [
+    "tests.components.*",
+    "website_frontend.components.*",
     "tests.integrations.*",
 ]
 ignore_errors = true
