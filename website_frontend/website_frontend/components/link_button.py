@@ -16,9 +16,9 @@ def link_button(
     badge: str | None = None,
     badge_color: str = Color.PRIMARY.value,
     border_color: str | None = None,
-    is_disabled=False,
-    is_external=True,
-    animated=False,
+    is_disabled: bool = False,
+    is_external: bool = True,
+    animated: bool = False,
 ) -> rx.Component:
     class_name = ""
 
@@ -46,6 +46,8 @@ def link_button(
                 "boxShadow": f"0 0 15px {Color.WHITE_TRANSPARENT.value}",
             }
         )
+
+    on_click = None if is_disabled else rx.redirect(path=href, is_external=is_external)
 
     return rx.button(
         rx.hstack(
@@ -132,5 +134,5 @@ def link_button(
         disabled=is_disabled,
         class_name=class_name,
         style=style,
-        on_click=rx.redirect(path=href, is_external=is_external),
+        on_click=on_click,
     )
