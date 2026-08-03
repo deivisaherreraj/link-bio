@@ -35,11 +35,31 @@ def build_avatar_status(raw_key: str) -> AvatarStatus:
 
 
 def get_profile_technologies() -> list[TechBadge]:
-    return [
-        TechBadge(
-            name=item["name"],
-            color=item["color"],
-            icon_class=item["icon_class"],
+    badges: list[TechBadge] = []
+
+    for item in profile_const.TECHNOLOGIES:
+        if not isinstance(item, dict):
+            continue
+
+        name = item.get("name")
+        color = item.get("color")
+        icon_class = item.get("icon_class")
+
+        if not isinstance(name, str) or not name.strip():
+            continue
+
+        if not isinstance(color, str) or not color.strip():
+            continue
+
+        if not isinstance(icon_class, str) or not icon_class.strip():
+            continue
+
+        badges.append(
+            TechBadge(
+                name=name.strip(),
+                color=color.strip(),
+                icon_class=icon_class.strip(),
+            )
         )
-        for item in profile_const.TECHNOLOGIES
-    ]
+
+    return badges

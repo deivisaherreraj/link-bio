@@ -43,7 +43,10 @@ class SupabaseAPI:
 
     def _get_string(self, payload: Mapping[str, object], key: str) -> str:
         value = payload.get(key)
-        return value if isinstance(value, str) else ""
+        if not isinstance(value, str):
+            return ""
+
+        return value.strip()
 
     def _get_optional_string(
         self, payload: Mapping[str, object], key: str
@@ -75,6 +78,13 @@ class SupabaseAPI:
                     continue
 
                 featured_item = dict(featured_item)
+                href = self._get_string(featured_item, "href")
+                image_url = self._get_string(featured_item, "image_url")
+                title = self._get_string(featured_item, "title")
+
+                if not href or not image_url or not title:
+                    continue
+
                 technologies = self._normalize_technologies(
                     featured_item.get("technologies")
                 )
@@ -97,9 +107,9 @@ class SupabaseAPI:
 
                 featured_data.append(
                     Featured(
-                        href=self._get_string(featured_item, "href"),
-                        image_url=self._get_string(featured_item, "image_url"),
-                        title=self._get_string(featured_item, "title"),
+                        href=href,
+                        image_url=image_url,
+                        title=title,
                         description=self._get_optional_string(
                             featured_item, "description"
                         ),

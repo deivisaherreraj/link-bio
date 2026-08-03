@@ -151,3 +151,41 @@ def test_featured_maps_known_status_with_full_contract():
     assert result[0].status.bg_color == "rgba(16, 185, 129, 0.15)"
     assert result[0].status.icon == "globe"
     assert result[0].status.animation_class == ""
+
+
+def test_featured_skips_rows_missing_required_contract_fields():
+    rows: list[Mapping[str, Any]] = [
+        {
+            "href": " ",
+            "image_url": "https://example.com/project.png",
+            "title": "Example Project",
+            "status": "production",
+        },
+        {
+            "href": "https://example.com/project",
+            "image_url": "",
+            "title": "Example Project",
+            "status": "production",
+        },
+        {
+            "href": "https://example.com/project",
+            "image_url": "https://example.com/project.png",
+            "title": "  ",
+            "status": "production",
+        },
+        {
+            "href": "https://example.com/valid-project",
+            "image_url": "https://example.com/valid-project.png",
+            "title": "Valid Project",
+            "status": "production",
+        },
+    ]
+    api = SupabaseAPI()
+    api.supabase = StubSupabaseClient(rows)  # type: ignore[assignment]
+
+    result = api.featured()
+
+    assert len(result) == 1
+    assert result[0].href == "https://example.com/valid-project"
+    assert result[0].image_url == "https://example.com/valid-project.png"
+    assert result[0].title == "Valid Project"

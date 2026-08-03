@@ -58,3 +58,24 @@ def test_get_profile_technologies_returns_empty_list_when_config_is_empty(monkey
     result = profile_service.get_profile_technologies()
 
     assert result == []
+
+
+def test_get_profile_technologies_skips_invalid_entries(monkeypatch):
+    monkeypatch.setattr(
+        profile_service.profile_const,
+        "TECHNOLOGIES",
+        [
+            {"name": "Angular", "color": "#DD0031", "icon_class": "fa-angular"},
+            {"name": "", "color": "#000000", "icon_class": "fa-empty"},
+            {"name": "Node.js", "color": " ", "icon_class": "fa-node-js"},
+            {"name": "Python", "color": "#3776AB", "icon_class": None},
+            "not-a-dict",
+        ],
+    )
+
+    result = profile_service.get_profile_technologies()
+
+    assert len(result) == 1
+    assert result[0].name == "Angular"
+    assert result[0].color == "#DD0031"
+    assert result[0].icon_class == "fa-angular"
