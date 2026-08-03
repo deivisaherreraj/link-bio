@@ -51,6 +51,28 @@ def test_schedule_parses_json_payload():
     assert configcat_api.configcat.calls == [("live_schedule", "")]
 
 
+def test_schedule_filters_invalid_keys_and_values():
+    configcat_api = ConfigCatAPI()
+    configcat_api.configcat = StubConfigCatClient(
+        {
+            "live_schedule": json.dumps(
+                {
+                    "0": "18:00",
+                    "2": " 20:30 ",
+                    "7": "19:00",
+                    "x": "21:00",
+                    "3": "",
+                    "4": "not-a-time",
+                }
+            )
+        }
+    )
+
+    result = configcat_api.schedule()
+
+    assert result == {"0": "18:00", "2": "20:30"}
+
+
 def test_schedule_returns_empty_dict_when_client_is_missing():
     configcat_api = ConfigCatAPI()
     if hasattr(configcat_api, "configcat"):

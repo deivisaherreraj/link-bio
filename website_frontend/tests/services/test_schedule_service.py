@@ -1,16 +1,17 @@
 from website_frontend.services import schedule_service
+from website_frontend.shared.schedule_types import LiveSchedule
 
 
 class StubConfigCatAPI:
-    def __init__(self, schedule: dict) -> None:
+    def __init__(self, schedule: LiveSchedule) -> None:
         self.schedule_data = schedule
 
-    def schedule(self) -> dict:
+    def schedule(self) -> LiveSchedule:
         return self.schedule_data
 
 
 def test_get_live_schedule_returns_adapter_schedule(monkeypatch):
-    schedule = {"0": "18:00"}
+    schedule: LiveSchedule = {"0": "18:00"}
     monkeypatch.setattr(
         schedule_service,
         "CONFIGCAT_API",
@@ -23,10 +24,10 @@ def test_get_live_schedule_returns_adapter_schedule(monkeypatch):
 
 
 def test_get_next_live_date_uses_schedule_and_timezone(monkeypatch):
-    schedule = {"1": "20:30"}
+    schedule: LiveSchedule = {"1": "20:30"}
     calls = []
 
-    def fake_next_date(received_schedule: dict, timezone: str) -> str:
+    def fake_next_date(received_schedule: LiveSchedule, timezone: str) -> str:
         calls.append((received_schedule, timezone))
         return "Martes, 01 de Enero a las 15:30 | Zona horaria: Bogota"
 

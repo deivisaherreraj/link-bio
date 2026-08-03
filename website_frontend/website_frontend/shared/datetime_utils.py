@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 
 import pytz
 
+from website_frontend.shared.schedule_types import LiveSchedule
+
 WEEKDAYS = {
     0: "Lunes",
     1: "Martes",
@@ -28,7 +30,7 @@ MONTHS = {
 }
 
 
-def next_date(dates: dict, timezone: str) -> str:
+def next_date(dates: LiveSchedule, timezone: str) -> str:
     if len(dates) == 0:
         return ""
 

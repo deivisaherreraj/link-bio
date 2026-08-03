@@ -1,11 +1,17 @@
 import json
 import os
-from typing import Any
+from datetime import datetime
+from typing import Any, TypeGuard
 
 import configcatclient
 import dotenv
 
 import website_frontend.constants.site_constants as site_const
+from website_frontend.shared.schedule_types import LiveSchedule, WeekdayKey
+
+
+def _is_weekday_key(value: object) -> TypeGuard[WeekdayKey]:
+    return isinstance(value, str) and value in {"0", "1", "2", "3", "4", "5", "6"}
 
 
 class ConfigCatAPI:
@@ -24,7 +30,33 @@ class ConfigCatAPI:
         response: Any = self.configcat.get_value(key, default)
         return str(response)
 
-    def schedule(self) -> dict:
+    def _normalize_schedule(self, payload: object) -> LiveSchedule:
+        if not isinstance(payload, dict):
+            return {}
+
+        normalized: LiveSchedule = {}
+
+        for key, value in payload.items():
+            if not _is_weekday_key(key):
+                continue
+
+            if not isinstance(value, str):
+                continue
+
+            schedule_time = value.strip()
+            if not schedule_time:
+                continue
+
+            try:
+                datetime.strptime(schedule_time, "%H:%M")
+            except ValueError:
+                continue
+
+            normalized[key] = schedule_time
+
+        return normalized
+
+    def schedule(self) -> LiveSchedule:
         response = self._get_config_value("live_schedule", "")
 
         try:
@@ -32,7 +64,7 @@ class ConfigCatAPI:
         except json.JSONDecodeError:
             return {}
 
-        return parsed if isinstance(parsed, dict) else {}
+        return self._normalize_schedule(parsed)
 
     def avatar_status(self) -> str:
         """
