@@ -38,6 +38,17 @@ def test_avatar_status_normalizes_client_value():
     ]
 
 
+def test_avatar_status_returns_default_for_unknown_value():
+    configcat_api = ConfigCatAPI()
+    configcat_api.configcat = StubConfigCatClient(
+        {"profile_availability_status": ' "desconocido" '}
+    )
+
+    result = configcat_api.avatar_status()
+
+    assert result == site_const.AVAILABILITY_STATUS_DEFAULT
+
+
 def test_schedule_parses_json_payload():
     schedule_payload = {"0": "18:00", "2": "20:30"}
     configcat_api = ConfigCatAPI()
