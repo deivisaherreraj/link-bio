@@ -113,7 +113,7 @@ def test_live_returns_offline_payload_when_stream_is_missing(monkeypatch):
     result = api.live("dherrerajdev")
 
     assert result.live is False
-    assert result.title == ""
-    assert result.category == ""
+    assert result.title is None
+    assert result.category is None
     assert result.tags == []
     assert result.viewer == 0

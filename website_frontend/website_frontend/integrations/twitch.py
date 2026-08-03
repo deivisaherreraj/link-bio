@@ -19,7 +19,7 @@ class TwitchAPI:
         self.token_exp: float = 0
 
     def _offline_live(self) -> Live:
-        return Live(live=False, title="", category="", tags=[], viewer=0)
+        return Live.offline()
 
     def generate_token(self) -> None:
         response = requests.post(
@@ -74,8 +74,7 @@ class TwitchAPI:
             viewer_count = stream.get("viewer_count")
             viewer = viewer_count if isinstance(viewer_count, int) else 0
 
-            return Live(
-                live=True,
+            return Live.online(
                 title=str(stream.get("title", "")),
                 category=str(stream.get("game_name", "")),
                 tags=(

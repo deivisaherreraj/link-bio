@@ -18,7 +18,7 @@ from website_frontend.shared.browser import LOCAL_TIMEZONE_SCRIPT
 
 
 class PageState(rx.State):
-    live_status = Live(live=False, title="", category="", tags=[], viewer=0)
+    live_status = Live.offline()
     featured_info: list[Featured] = []
     timezone: str = ""
     next_live: str = ""

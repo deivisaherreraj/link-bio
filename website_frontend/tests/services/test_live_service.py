@@ -13,8 +13,7 @@ class StubTwitchAPI:
 
 
 def test_get_live_status_uses_requested_user(monkeypatch):
-    live_status = Live(
-        live=True,
+    live_status = Live.online(
         title="Live coding",
         category="Software and Game Development",
         tags=["python", "reflex"],
@@ -30,13 +29,7 @@ def test_get_live_status_uses_requested_user(monkeypatch):
 
 
 def test_get_live_status_returns_offline_payload(monkeypatch):
-    live_status = Live(
-        live=False,
-        title="",
-        category="",
-        tags=[],
-        viewer=0,
-    )
+    live_status = Live.offline()
     twitch_api = StubTwitchAPI(live_status)
     monkeypatch.setattr(live_service, "TWITCH_API", twitch_api)
 
