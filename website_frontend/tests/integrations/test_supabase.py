@@ -125,3 +125,29 @@ def test_featured_maps_blank_optional_fields_to_none():
     assert result[0].description is None
     assert result[0].github_url is None
     assert result[0].live_url is None
+
+
+def test_featured_maps_known_status_with_full_contract():
+    rows: list[Mapping[str, Any]] = [
+        {
+            "href": "https://example.com/project",
+            "image_url": "https://example.com/project.png",
+            "title": "Example Project",
+            "description": "Example description",
+            "technologies": ["Python"],
+            "github_url": "https://github.com/example/project",
+            "live_url": "https://example.com/live",
+            "status": "production",
+        }
+    ]
+    api = SupabaseAPI()
+    api.supabase = StubSupabaseClient(rows)  # type: ignore[assignment]
+
+    result = api.featured()
+
+    assert len(result) == 1
+    assert result[0].status.label == "En Producción"
+    assert result[0].status.color == "#10B981"
+    assert result[0].status.bg_color == "rgba(16, 185, 129, 0.15)"
+    assert result[0].status.icon == "globe"
+    assert result[0].status.animation_class == ""

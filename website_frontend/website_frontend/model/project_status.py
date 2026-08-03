@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import BaseModel
 
 
@@ -11,8 +9,8 @@ class ProjectStatus(BaseModel):
     """
 
     key: str
-    label: Optional[str]
-    color: Optional[str]
-    bg_color: Optional[str]
-    icon: Optional[str]
-    animation_class: Optional[str]
+    label: str
+    color: str
+    bg_color: str
+    icon: str
+    animation_class: str
