@@ -29,3 +29,21 @@ def test_link_button_enabled_state_keeps_redirect() -> None:
 
     assert 'ReflexEvent("_redirect"' in rendered
     assert 'https://example.com' in rendered
+
+
+def test_link_button_placeholder_href_disables_navigation() -> None:
+    component = link_button(
+        href="#",
+        title="Example",
+        description="Example description",
+        icon="fa-solid fa-star",
+    )
+
+    rendered = str(component)
+
+    assert 'disabled:true' in rendered
+    assert 'ReflexEvent("_redirect"' not in rendered
+    assert (
+        '"pointerEvents" : "none"' in rendered
+        or '["pointerEvents"] : "none"' in rendered
+    )

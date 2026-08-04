@@ -117,3 +117,64 @@ def test_live_returns_offline_payload_when_stream_is_missing(monkeypatch):
     assert result.category is None
     assert result.tags == []
     assert result.viewer == 0
+
+
+def test_live_returns_offline_payload_for_incomplete_stream_payload(monkeypatch):
+    api = twitch.TwitchAPI()
+    api.token = "existing-token"
+    api.token_exp = 999
+
+    monkeypatch.setattr(api, "token_valid", lambda: True)
+    monkeypatch.setattr(
+        twitch.requests,
+        "get",
+        lambda url, headers: StubResponse(
+            200,
+            {
+                "data": [
+                    {
+                        "title": " ",
+                        "game_name": "Software and Game Development",
+                        "tags": ["python"],
+                        "viewer_count": 42,
+                    }
+                ]
+            },
+        ),
+    )
+
+    result = api.live("dherrerajdev")
+
+    assert result.live is False
+    assert result.title is None
+    assert result.category is None
+
+
+def test_live_filters_invalid_or_blank_tags(monkeypatch):
+    api = twitch.TwitchAPI()
+    api.token = "existing-token"
+    api.token_exp = 999
+
+    monkeypatch.setattr(api, "token_valid", lambda: True)
+    monkeypatch.setattr(
+        twitch.requests,
+        "get",
+        lambda url, headers: StubResponse(
+            200,
+            {
+                "data": [
+                    {
+                        "title": "Live coding",
+                        "game_name": "Software and Game Development",
+                        "tags": ["python", " ", 123, "reflex"],
+                        "viewer_count": 42,
+                    }
+                ]
+            },
+        ),
+    )
+
+    result = api.live("dherrerajdev")
+
+    assert result.live is True
+    assert result.tags == ["python", "reflex"]

@@ -21,6 +21,24 @@ class TwitchAPI:
     def _offline_live(self) -> Live:
         return Live.offline()
 
+    def _normalize_tags(self, raw_value: object) -> list[str]:
+        if not isinstance(raw_value, list):
+            return []
+
+        normalized: list[str] = []
+
+        for tag in raw_value:
+            if not isinstance(tag, str):
+                continue
+
+            clean_tag = tag.strip()
+            if not clean_tag:
+                continue
+
+            normalized.append(clean_tag)
+
+        return normalized
+
     def generate_token(self) -> None:
         response = requests.post(
             "https://id.twitch.tv/oauth2/token",
@@ -71,17 +89,22 @@ class TwitchAPI:
             if not isinstance(stream, dict):
                 return self._offline_live()
 
+            title = stream.get("title")
+            category = stream.get("game_name")
+
+            if not isinstance(title, str) or not title.strip():
+                return self._offline_live()
+
+            if not isinstance(category, str) or not category.strip():
+                return self._offline_live()
+
             viewer_count = stream.get("viewer_count")
             viewer = viewer_count if isinstance(viewer_count, int) else 0
 
             return Live.online(
-                title=str(stream.get("title", "")),
-                category=str(stream.get("game_name", "")),
-                tags=(
-                    [str(tag) for tag in stream.get("tags", [])]
-                    if isinstance(stream.get("tags"), list)
-                    else []
-                ),
+                title=title.strip(),
+                category=category.strip(),
+                tags=self._normalize_tags(stream.get("tags")),
                 viewer=viewer,
             )
 

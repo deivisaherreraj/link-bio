@@ -47,38 +47,55 @@ def link_button(
             }
         )
 
-    on_click = None if is_disabled else rx.redirect(path=href, is_external=is_external)
+    is_placeholder = href.strip() in {"/", "#"}
+    is_interactive = not is_disabled and not is_placeholder
+
+    if is_placeholder:
+        style.update(
+            {
+                "pointerEvents": "none",
+                "opacity": "0.6",
+            }
+        )
+
+    on_click = (
+        None if not is_interactive else rx.redirect(path=href, is_external=is_external)
+    )
+    has_visual = bool(icon or image)
 
     return rx.button(
         rx.hstack(
             # Icon wrapper
-            rx.box(
-                rx.cond(
-                    icon,
-                    rx.el.I.create(
-                        class_name=icon,
-                        style={"color": icon_color} if icon_color else None,
+            rx.cond(
+                has_visual,
+                rx.box(
+                    rx.cond(
+                        icon,
+                        rx.el.I.create(
+                            class_name=icon,
+                            style={"color": icon_color} if icon_color else None,
+                        ),
+                        rx.image(
+                            src=image,
+                            width=Size.LARGE.value,
+                            height=Size.LARGE.value,
+                            margin=Size.MEDIUM.value,
+                            alt=title,
+                        ),
                     ),
-                    rx.image(
-                        src=image,
-                        width=Size.LARGE.value,
-                        height=Size.LARGE.value,
-                        margin=Size.MEDIUM.value,
-                        alt=title,
-                    ),
+                    font_size=FontSize.DEFAULT.value,
+                    color=Color.WHITE.value,
+                    width="32px",
+                    height="32px",
+                    min_width="32px",
+                    display="flex",
+                    align_items="center",
+                    justify_content="center",
+                    flex_shrink=0,
+                    margin_right=Margin.LARGE.value,
+                    border_radius="8px",
+                    background_color=BackgroundColor.LIGHT.value,
                 ),
-                font_size=FontSize.DEFAULT.value,
-                color=Color.WHITE.value,
-                width="32px",
-                height="32px",
-                min_width="32px",
-                display="flex",
-                align_items="center",
-                justify_content="center",
-                flex_shrink=0,
-                margin_right=Margin.LARGE.value,
-                border_radius="8px",
-                background_color=BackgroundColor.LIGHT.value,
             ),
             # Texto
             rx.box(
@@ -131,7 +148,7 @@ def link_button(
             align="center",
             width="100%",
         ),
-        disabled=is_disabled,
+        disabled=is_disabled or is_placeholder,
         class_name=class_name,
         style=style,
         on_click=on_click,

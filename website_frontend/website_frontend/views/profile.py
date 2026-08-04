@@ -20,6 +20,71 @@ def profile(
     linkedin_url: str | None = None,
     email_url: str | None = None,
 ) -> rx.Component:
+    normalized_github_url = (
+        github_url.strip()
+        if isinstance(github_url, str) and github_url.strip()
+        else None
+    )
+    normalized_linkedin_url = (
+        linkedin_url.strip()
+        if isinstance(linkedin_url, str) and linkedin_url.strip()
+        else None
+    )
+    normalized_email_url = (
+        email_url.strip() if isinstance(email_url, str) and email_url.strip() else None
+    )
+
+    has_github = normalized_github_url is not None
+    has_linkedin = normalized_linkedin_url is not None
+    has_email = normalized_email_url is not None
+
+    social_links: list[rx.Component] = []
+
+    if has_github:
+        social_links.append(
+            rx.link(
+                rx.el.I.create(
+                    class_name="fa-brands fa-github",
+                    font_size=FontSize.EXTRA_LARGE.value,
+                ),
+                href=normalized_github_url,
+                is_external=True,
+                aria_label="GitHub",
+                color=TextColor.BODY.value,
+                _hover={"color": Color.PRIMARY.value},
+            )
+        )
+
+    if has_linkedin:
+        social_links.append(
+            rx.link(
+                rx.el.I.create(
+                    class_name="fa-brands fa-linkedin",
+                    font_size=FontSize.EXTRA_LARGE.value,
+                ),
+                href=normalized_linkedin_url,
+                is_external=True,
+                aria_label="LinkedIn",
+                color=TextColor.BODY.value,
+                _hover={"color": Color.PRIMARY.value},
+            )
+        )
+
+    if has_email:
+        social_links.append(
+            rx.link(
+                rx.el.I.create(
+                    class_name="fa-regular fa-envelope",
+                    font_size=FontSize.EXTRA_LARGE.value,
+                ),
+                href=normalized_email_url,
+                is_external=False,
+                aria_label="Email",
+                color=TextColor.BODY.value,
+                _hover={"color": Color.PRIMARY.value},
+            )
+        )
+
     return rx.vstack(
         # Avatar con badge de disponibilidad
         avatar_with_status(
@@ -71,54 +136,7 @@ def profile(
         ),
         # Iconos sociales
         rx.hstack(
-            rx.cond(
-                github_url is not None,
-                # Ajustar el componente generico para que pueda usarse aqui
-                # link_icon("/icons/github.svg", const.GITHUB_URL, "GitHub"),
-                rx.link(
-                    rx.el.I.create(
-                        class_name="fa-brands fa-github",
-                        font_size=FontSize.EXTRA_LARGE.value,
-                    ),
-                    href=github_url,
-                    is_external=True,
-                    aria_label="GitHub",
-                    color=TextColor.BODY.value,
-                    _hover={"color": Color.PRIMARY.value},
-                ),
-            ),
-            rx.cond(
-                linkedin_url is not None,
-                # Ajustar el componente generico para que pueda usarse aqui
-                # link_icon("/icons/linkedin.svg", const.LINKEDIN_URL, "LinkedIn"),
-                rx.link(
-                    rx.el.I.create(
-                        class_name="fa-brands fa-linkedin",
-                        font_size=FontSize.EXTRA_LARGE.value,
-                    ),
-                    href=linkedin_url,
-                    is_external=True,
-                    aria_label="LinkedIn",
-                    color=TextColor.BODY.value,
-                    _hover={"color": Color.PRIMARY.value},
-                ),
-            ),
-            rx.cond(
-                email_url is not None,
-                # Ajustar el componente generico para que pueda usarse aqui
-                # link_icon("/icons/email.svg", const.EMAIL, "Email"),
-                rx.link(
-                    rx.el.I.create(
-                        class_name="fa-regular fa-envelope",
-                        font_size=FontSize.EXTRA_LARGE.value,
-                    ),
-                    href=email_url,
-                    is_external=True,
-                    aria_label="Email",
-                    color=TextColor.BODY.value,
-                    _hover={"color": Color.PRIMARY.value},
-                ),
-            ),
+            *social_links,
             justify="center",
             spacing=Spacing.LARGE.value,
         ),

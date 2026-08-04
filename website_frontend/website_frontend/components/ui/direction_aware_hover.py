@@ -30,7 +30,7 @@ def direction_aware_hover(
             # Imagen de fondo
             rx.image(
                 src=image_url,
-                alt="Background",
+                alt="",
                 position="absolute",
                 inset="0",
                 width="100%",
