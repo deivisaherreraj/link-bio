@@ -1,6 +1,7 @@
 import reflex as rx
 
 import website_frontend.styles.styles as styles
+from website_frontend.shared.urls import is_actionable_href
 from website_frontend.styles.colors import BackgroundColor, Color
 from website_frontend.styles.fonts import FontSize, FontWeight
 from website_frontend.styles.styles import Margin, Padding, Size
@@ -47,10 +48,10 @@ def link_button(
             }
         )
 
-    is_placeholder = href.strip() in {"/", "#"}
-    is_interactive = not is_disabled and not is_placeholder
+    is_actionable = is_actionable_href(href)
+    is_interactive = not is_disabled and is_actionable
 
-    if is_placeholder:
+    if not is_actionable:
         style.update(
             {
                 "pointerEvents": "none",
@@ -148,7 +149,7 @@ def link_button(
             align="center",
             width="100%",
         ),
-        disabled=is_disabled or is_placeholder,
+        disabled=is_disabled or not is_actionable,
         class_name=class_name,
         style=style,
         on_click=on_click,

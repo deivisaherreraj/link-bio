@@ -12,7 +12,7 @@ def test_link_button_without_icon_or_image_skips_empty_visual_wrapper() -> None:
 
     rendered = str(component)
 
-    assert 'false?(jsx(Fragment,{},jsx(RadixThemesBox' in rendered
+    assert "false?(jsx(Fragment,{},jsx(RadixThemesBox" in rendered
     assert "Example description" in rendered
 
 

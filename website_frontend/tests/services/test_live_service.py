@@ -38,3 +38,19 @@ def test_get_live_status_returns_offline_payload(monkeypatch):
     assert result.live is False
     assert result.viewer == 0
     assert twitch_api.users == ["dherrerajdev"]
+
+
+def test_get_live_status_fails_closed_for_invalid_twitch_username(monkeypatch):
+    live_status = Live.online(
+        title="Should not be returned",
+        category="Software and Game Development",
+        tags=["python"],
+        viewer=42,
+    )
+    twitch_api = StubTwitchAPI(live_status)
+    monkeypatch.setattr(live_service, "TWITCH_API", twitch_api)
+
+    result = live_service.get_live_status("bad-user")
+
+    assert result == Live.offline()
+    assert twitch_api.users == []

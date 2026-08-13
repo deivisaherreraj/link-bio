@@ -30,11 +30,30 @@ MONTHS = {
 }
 
 
+def normalize_timezone(timezone: object) -> str:
+    if not isinstance(timezone, str):
+        return ""
+
+    candidate = timezone.strip()
+    if not candidate:
+        return ""
+
+    try:
+        return pytz.timezone(candidate).zone
+    except Exception:
+        return ""
+
+
 def next_date(dates: LiveSchedule, timezone: str) -> str:
     if len(dates) == 0:
         return ""
 
-    tz = pytz.timezone(timezone)
+    normalized_timezone = normalize_timezone(timezone)
+    if normalized_timezone == "":
+        return ""
+
+    tz = pytz.timezone(normalized_timezone)
+
     now = datetime.now(tz)
     current_time = now.timetz()
 
@@ -64,7 +83,7 @@ def next_date(dates: LiveSchedule, timezone: str) -> str:
             ).astimezone(tz)
 
             day = "Hoy" if weekday == 0 else WEEKDAYS[local_date.weekday()]
-            zones = timezone.replace("_", " ").split("/")
+            zones = normalized_timezone.replace("_", " ").split("/")
             timezone_label = zones[len(zones) - 1]
 
             return local_date.strftime(

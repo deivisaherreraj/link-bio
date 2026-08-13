@@ -13,4 +13,4 @@ def test_direction_aware_hover_uses_decorative_background_alt() -> None:
 
     assert 'alt:""' in rendered
     assert 'alt:"Background"' not in rendered
-    assert '/images/example.png' in rendered
+    assert "/images/example.png" in rendered

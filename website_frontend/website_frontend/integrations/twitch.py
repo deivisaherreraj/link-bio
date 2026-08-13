@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 from typing import Any
@@ -6,6 +7,9 @@ import dotenv
 import requests
 
 from website_frontend.model.live import Live
+
+REQUEST_TIMEOUT_SECONDS = 5
+logger = logging.getLogger(__name__)
 
 
 class TwitchAPI:
@@ -18,7 +22,12 @@ class TwitchAPI:
         self.token: str | None = None
         self.token_exp: float = 0
 
-    def _offline_live(self) -> Live:
+    def _log_fail_closed(self, event: str, **context: object) -> None:
+        logger.warning(event, extra={"event": event, **context})
+
+    def _offline_live(self, **context: object) -> Live:
+        if context:
+            self._log_fail_closed("twitch_live_fetch_failed_closed", **context)
         return Live.offline()
 
     def _normalize_tags(self, raw_value: object) -> list[str]:
@@ -40,24 +49,43 @@ class TwitchAPI:
         return normalized
 
     def generate_token(self) -> None:
-        response = requests.post(
-            "https://id.twitch.tv/oauth2/token",
-            data={
-                "client_id": self.CLIENT_ID,
-                "client_secret": self.CLIENT_SECRET,
-                "grant_type": "client_credentials",
-            },
-        )
+        status_code: int | None = None
 
-        if response.status_code == 200:
-            data: Any = response.json()
-            access_token = data.get("access_token") if isinstance(data, dict) else None
-            expires_in = data.get("expires_in") if isinstance(data, dict) else None
+        try:
+            response = requests.post(
+                "https://id.twitch.tv/oauth2/token",
+                data={
+                    "client_id": self.CLIENT_ID,
+                    "client_secret": self.CLIENT_SECRET,
+                    "grant_type": "client_credentials",
+                },
+                timeout=REQUEST_TIMEOUT_SECONDS,
+            )
+            status_code = response.status_code
+        except Exception as exc:
+            self._log_fail_closed(
+                "twitch_token_fetch_failed_closed",
+                error_type=type(exc).__name__,
+            )
+        else:
+            if response.status_code == 200:
+                data: Any = response.json()
+                access_token = (
+                    data.get("access_token") if isinstance(data, dict) else None
+                )
+                expires_in = data.get("expires_in") if isinstance(data, dict) else None
 
-            if isinstance(access_token, str) and isinstance(expires_in, int | float):
-                self.token = access_token
-                self.token_exp = time.time() + expires_in
-                return
+                if isinstance(access_token, str) and isinstance(
+                    expires_in, int | float
+                ):
+                    self.token = access_token
+                    self.token_exp = time.time() + expires_in
+                    return
+
+            self._log_fail_closed(
+                "twitch_token_fetch_failed_closed",
+                status_code=status_code,
+            )
 
         self.token = None
         self.token_exp = 0
@@ -72,40 +100,48 @@ class TwitchAPI:
         if self.token is None:
             return self._offline_live()
 
-        response = requests.get(
-            f"https://api.twitch.tv/helix/streams?user_login={user}",
-            headers={
-                "Client-ID": self.CLIENT_ID,
-                "Authorization": f"Bearer {self.token}",
-            },
-        )
-
-        payload: Any = response.json()
-        data = payload.get("data") if isinstance(payload, dict) else None
-
-        if response.status_code == 200 and isinstance(data, list) and data:
-            stream = data[0]
-
-            if not isinstance(stream, dict):
-                return self._offline_live()
-
-            title = stream.get("title")
-            category = stream.get("game_name")
-
-            if not isinstance(title, str) or not title.strip():
-                return self._offline_live()
-
-            if not isinstance(category, str) or not category.strip():
-                return self._offline_live()
-
-            viewer_count = stream.get("viewer_count")
-            viewer = viewer_count if isinstance(viewer_count, int) else 0
-
-            return Live.online(
-                title=title.strip(),
-                category=category.strip(),
-                tags=self._normalize_tags(stream.get("tags")),
-                viewer=viewer,
+        try:
+            response = requests.get(
+                "https://api.twitch.tv/helix/streams",
+                params={"user_login": user},
+                headers={
+                    "Client-ID": self.CLIENT_ID,
+                    "Authorization": f"Bearer {self.token}",
+                },
+                timeout=REQUEST_TIMEOUT_SECONDS,
             )
 
-        return self._offline_live()
+            payload: Any = response.json()
+            data = payload.get("data") if isinstance(payload, dict) else None
+
+            if response.status_code == 200 and isinstance(data, list) and data:
+                stream = data[0]
+
+                if not isinstance(stream, dict):
+                    return self._offline_live(reason="invalid_stream_payload")
+
+                title = stream.get("title")
+                category = stream.get("game_name")
+
+                if not isinstance(title, str) or not title.strip():
+                    return self._offline_live(reason="missing_title")
+
+                if not isinstance(category, str) or not category.strip():
+                    return self._offline_live(reason="missing_category")
+
+                viewer_count = stream.get("viewer_count")
+                viewer = viewer_count if isinstance(viewer_count, int) else 0
+
+                return Live.online(
+                    title=title.strip(),
+                    category=category.strip(),
+                    tags=self._normalize_tags(stream.get("tags")),
+                    viewer=viewer,
+                )
+        except Exception as exc:
+            return self._offline_live(error_type=type(exc).__name__)
+
+        return self._offline_live(
+            status_code=response.status_code,
+            reason="offline_or_invalid_payload",
+        )

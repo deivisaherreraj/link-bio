@@ -2,6 +2,7 @@ import reflex as rx
 
 from website_frontend.components.status_badge import status_badge
 from website_frontend.model.featured import Featured
+from website_frontend.shared.urls import is_actionable_external_url
 from website_frontend.styles.fonts import FontSize, FontWeight
 from website_frontend.styles.styles import Color, Margin, Padding, Spacing
 
@@ -13,6 +14,13 @@ def link_featured(featured: Featured) -> rx.Component:
     - Usa un componente independiente status_badge para el badge.
     - Renderiza technologies con rx.foreach y flex-wrap.
     """
+    details_is_actionable = is_actionable_external_url(featured.href)
+    details_href = featured.href if details_is_actionable else "#"
+    details_class_name = "transition-colors z-10"
+
+    if details_is_actionable:
+        details_class_name = f"{details_class_name} hover:text-primary-light"
+
     return rx.flex(
         # Título + badge de estado
         rx.hstack(
@@ -81,8 +89,8 @@ def link_featured(featured: Featured) -> rx.Component:
                     spacing=Spacing.VERY_SMALL.value,
                     align="center",
                 ),
-                href=featured.href,
-                is_external=True,
+                href=details_href,
+                is_external=details_is_actionable,
                 font_size=FontSize.SMALL.value,
                 font_weight=FontWeight.MEDIUM.value,
                 color=Color.PRIMARY.value,
@@ -90,12 +98,14 @@ def link_featured(featured: Featured) -> rx.Component:
                 align_items="center",
                 gap="0.25rem",
                 z_index="10",
+                pointer_events="auto" if details_is_actionable else "none",
+                opacity="1" if details_is_actionable else "0.6",
                 aria_label=f"Ver detalles del proyecto {featured.title}",
-                class_name=("hover:text-primary-light transition-colors z-10"),
+                class_name=details_class_name,
             ),
             rx.hstack(
                 rx.cond(
-                    featured.github_url is not None,
+                    is_actionable_external_url(featured.github_url),
                     rx.link(
                         rx.icon("github"),
                         href=featured.github_url,
@@ -107,7 +117,7 @@ def link_featured(featured: Featured) -> rx.Component:
                     ),
                 ),
                 rx.cond(
-                    featured.live_url is not None,
+                    is_actionable_external_url(featured.live_url),
                     rx.link(
                         rx.icon("external-link"),
                         href=featured.live_url,

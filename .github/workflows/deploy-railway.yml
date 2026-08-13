@@ -3,32 +3,54 @@ name: Deploy to Railway
 on:
   push:
     branches:
-      - produccion
+    - produccion
 
 jobs:
   deploy:
-    if: github.repository == 'deivisaherreraj/link-bio'
+    if: github.repository == 'deivisaherreraj/link-in-bio'
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website_frontend
 
     permissions:
       contents: write
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
 
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
 
-      - name: Deploy to Railway
-        env:
-          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
-          RAILWAY_PROJECT_TOKEN: ${{ secrets.RAILWAY_PROJECT_TOKEN }}
-          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
-        run: railway up --service=$RAILWAY_SERVICE_ID
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
 
+    - name: Install dependencies
+      run: uv sync --dev
+
+    - name: Run quality checks
+      run: |
+        uv run pytest tests/integrations tests/services tests/shared tests/api tests/state
+        uv run ruff check .
+        uv run ruff format --check .
+        uv run mypy
+
+    - name: Install Railway CLI
+      working-directory: ${{ github.workspace }}
+      run: npm install -g @railway/cli
+
+    - name: Deploy to Railway
+      working-directory: ${{ github.workspace }}
+      env:
+        RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+        RAILWAY_PROJECT_TOKEN: ${{ secrets.RAILWAY_PROJECT_TOKEN }}
+        RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+      run: railway up --service=$RAILWAY_SERVICE_ID

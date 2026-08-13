@@ -15,6 +15,7 @@ from website_frontend.services.profile_service import (
 )
 from website_frontend.services.schedule_service import get_next_live_date
 from website_frontend.shared.browser import LOCAL_TIMEZONE_SCRIPT
+from website_frontend.shared.datetime_utils import normalize_timezone
 
 
 class PageState(rx.State):
@@ -49,7 +50,11 @@ class PageState(rx.State):
 
     @rx.event
     async def update_timezone(self, timezone: str):
-        self.timezone = timezone
+        normalized_timezone = normalize_timezone(timezone)
+        if normalized_timezone == "":
+            return
+
+        self.timezone = normalized_timezone
         self.next_live = get_next_live_date(self.timezone)
 
     @rx.event

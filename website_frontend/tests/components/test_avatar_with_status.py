@@ -18,4 +18,4 @@ def test_avatar_with_status_passes_plain_name_to_avatar() -> None:
 
     assert '["Deivis"]' not in rendered
     assert '"Foto de perfil de Deivis"' in rendered
-    assert 'Deivis' in rendered
+    assert "Deivis" in rendered

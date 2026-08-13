@@ -27,6 +27,18 @@ def test_next_date_returns_empty_string_for_empty_dates():
     assert result == ""
 
 
+def test_normalize_timezone_returns_canonical_timezone():
+    result = datetime_utils.normalize_timezone("  America/Bogota  ")
+
+    assert result == "America/Bogota"
+
+
+def test_normalize_timezone_returns_empty_string_for_invalid_value():
+    result = datetime_utils.normalize_timezone("Mars/Olympus_Mons")
+
+    assert result == ""
+
+
 def test_next_date_returns_today_when_future_slot_exists(monkeypatch):
     monkeypatch.setattr(datetime_utils, "datetime", FixedBogotaDateTime)
 
@@ -46,3 +58,11 @@ def test_next_date_skips_passed_slot_and_uses_next_weekday(monkeypatch):
     assert result == (
         "Miércoles, 05 de Agosto a las 17:30 | Zona horaria: Buenos Aires"
     )
+
+
+def test_next_date_returns_empty_string_for_invalid_timezone(monkeypatch):
+    monkeypatch.setattr(datetime_utils, "datetime", FixedBogotaDateTime)
+
+    result = datetime_utils.next_date({"0": "20:30"}, "Mars/Olympus_Mons")
+
+    assert result == ""

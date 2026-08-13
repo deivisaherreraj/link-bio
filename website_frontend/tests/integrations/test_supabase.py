@@ -43,6 +43,17 @@ class StubSupabaseClient:
         return self.query
 
 
+class FailingTableQuery(StubTableQuery):
+    def execute(self) -> StubExecuteResult:
+        raise RuntimeError("supabase unavailable")
+
+
+class FailingSupabaseClient(StubSupabaseClient):
+    def __init__(self) -> None:
+        self.tables: list[str] = []
+        self.query = FailingTableQuery([])
+
+
 def test_normalize_technologies_handles_supported_shapes():
     api = SupabaseAPI()
 
@@ -128,6 +139,27 @@ def test_featured_maps_blank_optional_fields_to_none():
     assert result[0].live_url is None
 
 
+def test_featured_drops_invalid_optional_external_urls():
+    rows: list[Mapping[str, Any]] = [
+        {
+            "href": "https://example.com/project",
+            "image_url": "https://example.com/project.png",
+            "title": "Example Project",
+            "github_url": "github.com/example/project",
+            "live_url": "javascript:alert('xss')",
+            "status": "production",
+        }
+    ]
+    api = SupabaseAPI()
+    api.supabase = StubSupabaseClient(rows)  # type: ignore[assignment]
+
+    result = api.featured()
+
+    assert len(result) == 1
+    assert result[0].github_url is None
+    assert result[0].live_url is None
+
+
 def test_featured_maps_known_status_with_full_contract():
     rows: list[Mapping[str, Any]] = [
         {
@@ -175,6 +207,18 @@ def test_featured_skips_rows_missing_required_contract_fields():
             "status": "production",
         },
         {
+            "href": "example.com/project",
+            "image_url": "https://example.com/project.png",
+            "title": "Example Project",
+            "status": "production",
+        },
+        {
+            "href": "javascript:alert('xss')",
+            "image_url": "https://example.com/project.png",
+            "title": "Example Project",
+            "status": "production",
+        },
+        {
             "href": "https://example.com/valid-project",
             "image_url": "https://example.com/valid-project.png",
             "title": "Valid Project",
@@ -214,3 +258,25 @@ def test_featured_technologies_default_list_is_not_shared():
 
     assert featured_a.technologies == ["Python"]
     assert featured_b.technologies == []
+
+
+def test_featured_returns_empty_list_when_execute_raises_runtime_error():
+    api = SupabaseAPI()
+    api.supabase = FailingSupabaseClient()  # type: ignore[assignment]
+
+    result = api.featured()
+
+    assert result == []
+
+
+def test_featured_logs_fail_closed_warning_when_execute_raises(caplog):
+    api = SupabaseAPI()
+    api.supabase = FailingSupabaseClient()  # type: ignore[assignment]
+
+    with caplog.at_level("WARNING"):
+        result = api.featured()
+
+    assert result == []
+    assert caplog.records[-1].message == "supabase_featured_fetch_failed_closed"
+    assert caplog.records[-1].event == "supabase_featured_fetch_failed_closed"
+    assert caplog.records[-1].error_type == "RuntimeError"
