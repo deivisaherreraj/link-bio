@@ -1,6 +1,24 @@
 import os
+from urllib.parse import urlparse
 
 import reflex as rx
+
+DEFAULT_API_URL = "http://localhost:8000"
+
+
+def _normalize_api_url(value: str | None) -> str:
+    if value is None:
+        return DEFAULT_API_URL
+
+    candidate = value.strip()
+    if not candidate:
+        return DEFAULT_API_URL
+
+    parsed = urlparse(candidate)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        return DEFAULT_API_URL
+
+    return candidate
 
 tailwind_plugin = rx.plugins.TailwindV4Plugin(
     {
@@ -65,7 +83,7 @@ tailwind_plugin = rx.plugins.TailwindV4Plugin(
 
 config = rx.Config(
     app_name="website_frontend",  # Nombre de la aplicación Reflex
-    api_url=os.getenv("API_URL", "http://localhost:8000"),  # URL de la API backend
+    api_url=_normalize_api_url(os.getenv("API_URL")),  # URL de la API backend
     plugins=[
         rx.plugins.SitemapPlugin(),  # Habilita la generación automática de sitemaps
         tailwind_plugin,  # Uses Tailwind CSS v4
