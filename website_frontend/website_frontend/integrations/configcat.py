@@ -29,7 +29,10 @@ class ConfigCatAPI:
             return default
 
         response: Any = self.configcat.get_value(key, default)
-        return str(response)
+        if not isinstance(response, str):
+            return default
+
+        return response
 
     def _normalize_schedule(self, payload: object) -> LiveSchedule:
         if not isinstance(payload, dict):

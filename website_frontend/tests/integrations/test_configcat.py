@@ -1,15 +1,16 @@
 import json
+from typing import Any
 
 import website_frontend.constants.site_constants as site_const
 from website_frontend.integrations.configcat import ConfigCatAPI
 
 
 class StubConfigCatClient:
-    def __init__(self, values: dict[str, str]) -> None:
+    def __init__(self, values: dict[str, Any]) -> None:
         self.values = values
         self.calls: list[tuple[str, str]] = []
 
-    def get_value(self, key: str, default: str) -> str:
+    def get_value(self, key: str, default: str) -> Any:
         self.calls.append((key, default))
         return self.values.get(key, default)
 
@@ -47,6 +48,20 @@ def test_avatar_status_returns_default_for_unknown_value():
     result = configcat_api.avatar_status()
 
     assert result == site_const.AVAILABILITY_STATUS_DEFAULT
+
+
+def test_avatar_status_returns_default_for_non_string_value():
+    configcat_api = ConfigCatAPI()
+    configcat_api.configcat = StubConfigCatClient(
+        {"profile_availability_status": True}
+    )
+
+    result = configcat_api.avatar_status()
+
+    assert result == site_const.AVAILABILITY_STATUS_DEFAULT
+    assert configcat_api.configcat.calls == [
+        ("profile_availability_status", site_const.AVAILABILITY_STATUS_DEFAULT)
+    ]
 
 
 def test_schedule_parses_json_payload():
@@ -111,3 +126,15 @@ def test_schedule_returns_empty_dict_for_non_mapping_json_payload():
     result = configcat_api.schedule()
 
     assert result == {}
+
+
+def test_schedule_returns_empty_dict_for_non_string_value():
+    configcat_api = ConfigCatAPI()
+    configcat_api.configcat = StubConfigCatClient(
+        {"live_schedule": {"0": "18:00"}}
+    )
+
+    result = configcat_api.schedule()
+
+    assert result == {}
+    assert configcat_api.configcat.calls == [("live_schedule", "")]

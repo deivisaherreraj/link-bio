@@ -6,6 +6,7 @@ import dotenv
 from supabase import Client, create_client
 
 import website_frontend.constants.featured_constants as featured_const
+from website_frontend.integrations.observability import fail_closed_event
 from website_frontend.model.featured import Featured
 from website_frontend.shared.urls import is_actionable_external_url
 
@@ -35,8 +36,16 @@ class SupabaseAPI:
             return []
 
         if isinstance(raw_value, list):
-            # Ya viene como lista de strings
-            return [str(t).strip() for t in raw_value if str(t).strip()]
+            normalized: list[str] = []
+            for technology in raw_value:
+                if not isinstance(technology, str):
+                    continue
+
+                value = technology.strip()
+                if value:
+                    normalized.append(value)
+
+            return normalized
 
         if isinstance(raw_value, str):
             # Cadena "React, Node.js, MongoDB"
@@ -70,6 +79,18 @@ class SupabaseAPI:
             return None
 
         return value
+
+    def _get_status_config(self, raw_value: object) -> featured_const.ProjectStatus:
+        default_key = featured_const.DEFAULT_PROJECT_STATUS_KEY
+
+        if not isinstance(raw_value, str):
+            return featured_const.PROJECT_STATUS_CONFIG[default_key]
+
+        normalized_key = raw_value.strip().lower()
+        if normalized_key not in featured_const.PROJECT_STATUS_CONFIG:
+            return featured_const.PROJECT_STATUS_CONFIG[default_key]
+
+        return featured_const.PROJECT_STATUS_CONFIG[normalized_key]
 
     def featured(self) -> list[Featured]:
         if not hasattr(self, "supabase"):
@@ -107,21 +128,8 @@ class SupabaseAPI:
                     technologies = self._normalize_technologies(
                         featured_item.get("technologies")
                     )
-
-                    status_key = (
-                        str(
-                            featured_item.get(
-                                "status", featured_const.DEFAULT_PROJECT_STATUS_KEY
-                            )
-                        )
-                        .strip()
-                        .lower()
-                    )
-                    status_config = featured_const.PROJECT_STATUS_CONFIG.get(
-                        status_key,
-                        featured_const.PROJECT_STATUS_CONFIG[
-                            featured_const.DEFAULT_PROJECT_STATUS_KEY
-                        ],
+                    status_config = self._get_status_config(
+                        featured_item.get("status")
                     )
 
                     featured_data.append(
@@ -147,9 +155,11 @@ class SupabaseAPI:
         except Exception as exc:
             logger.warning(
                 "supabase_featured_fetch_failed_closed",
-                extra={
-                    "event": "supabase_featured_fetch_failed_closed",
-                    "error_type": type(exc).__name__,
-                },
+                extra=fail_closed_event(
+                    event="supabase_featured_fetch_failed_closed",
+                    integration="supabase",
+                    operation="featured",
+                    context={"error_type": type(exc).__name__},
+                ),
             )
             return []

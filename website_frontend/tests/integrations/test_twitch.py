@@ -78,6 +78,9 @@ def test_generate_token_logs_fail_closed_warning(monkeypatch, caplog):
 
     assert caplog.records[-1].message == "twitch_token_fetch_failed_closed"
     assert caplog.records[-1].event == "twitch_token_fetch_failed_closed"
+    assert caplog.records[-1].integration == "twitch"
+    assert caplog.records[-1].operation == "token"
+    assert caplog.records[-1].fail_closed is True
     assert caplog.records[-1].status_code == 500
 
 
@@ -280,6 +283,9 @@ def test_live_logs_fail_closed_warning_on_request_failure(monkeypatch, caplog):
     assert result == api._offline_live()
     assert caplog.records[-1].message == "twitch_live_fetch_failed_closed"
     assert caplog.records[-1].event == "twitch_live_fetch_failed_closed"
+    assert caplog.records[-1].integration == "twitch"
+    assert caplog.records[-1].operation == "live"
+    assert caplog.records[-1].fail_closed is True
     assert caplog.records[-1].error_type == "RequestException"
 
 

@@ -43,8 +43,15 @@ def get_avatar_status_key() -> str:
     return CONFIGCAT_API.avatar_status()
 
 
-def build_avatar_status(raw_key: str) -> AvatarStatus:
-    normalized_key = str(raw_key).strip().strip('"').strip("'").lower()
+def build_avatar_status(raw_key: object) -> AvatarStatus:
+    if not isinstance(raw_key, str):
+        return get_default_avatar_status()
+
+    normalized_key = raw_key.strip().strip('"').strip("'").lower()
+
+    if not normalized_key:
+        return get_default_avatar_status()
+
     resolved_key, state = _resolve_avatar_state(normalized_key)
     return AvatarStatus(
         key=resolved_key,

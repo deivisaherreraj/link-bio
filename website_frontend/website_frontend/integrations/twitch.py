@@ -6,6 +6,7 @@ from typing import Any
 import dotenv
 import requests
 
+from website_frontend.integrations.observability import fail_closed_event
 from website_frontend.model.live import Live
 
 REQUEST_TIMEOUT_SECONDS = 5
@@ -23,7 +24,16 @@ class TwitchAPI:
         self.token_exp: float = 0
 
     def _log_fail_closed(self, event: str, **context: object) -> None:
-        logger.warning(event, extra={"event": event, **context})
+        operation = "live" if event == "twitch_live_fetch_failed_closed" else "token"
+        logger.warning(
+            event,
+            extra=fail_closed_event(
+                event=event,
+                integration="twitch",
+                operation=operation,
+                context=context,
+            ),
+        )
 
     def _offline_live(self, **context: object) -> Live:
         if context:

@@ -69,6 +69,14 @@ def test_normalize_technologies_handles_supported_shapes():
     assert api._normalize_technologies(123) == []
 
 
+def test_normalize_technologies_drops_non_string_list_items():
+    api = SupabaseAPI()
+
+    assert api._normalize_technologies(
+        [" Python ", None, True, 42, {"name": "Reflex"}, "   ", "Reflex"]
+    ) == ["Python", "Reflex"]
+
+
 def test_featured_returns_empty_list_when_client_is_missing():
     api = SupabaseAPI()
     if hasattr(api, "supabase"):
@@ -139,6 +147,25 @@ def test_featured_maps_blank_optional_fields_to_none():
     assert result[0].live_url is None
 
 
+def test_featured_drops_non_string_technologies_from_list_payload():
+    rows: list[Mapping[str, Any]] = [
+        {
+            "href": "https://example.com/project",
+            "image_url": "https://example.com/project.png",
+            "title": "Example Project",
+            "technologies": [" Python ", False, None, 3.14, "", "Reflex"],
+            "status": "production",
+        }
+    ]
+    api = SupabaseAPI()
+    api.supabase = StubSupabaseClient(rows)  # type: ignore[assignment]
+
+    result = api.featured()
+
+    assert len(result) == 1
+    assert result[0].technologies == ["Python", "Reflex"]
+
+
 def test_featured_drops_invalid_optional_external_urls():
     rows: list[Mapping[str, Any]] = [
         {
@@ -184,6 +211,74 @@ def test_featured_maps_known_status_with_full_contract():
     assert result[0].status.bg_color == "rgba(16, 185, 129, 0.15)"
     assert result[0].status.icon == "globe"
     assert result[0].status.animation_class == ""
+
+
+def test_featured_normalizes_typed_string_status_values():
+    rows: list[Mapping[str, Any]] = [
+        {
+            "href": "https://example.com/project",
+            "image_url": "https://example.com/project.png",
+            "title": "Example Project",
+            "status": "  PRODUCTION  ",
+        }
+    ]
+    api = SupabaseAPI()
+    api.supabase = StubSupabaseClient(rows)  # type: ignore[assignment]
+
+    result = api.featured()
+
+    assert len(result) == 1
+    assert result[0].status == featured_const.PROJECT_STATUS_CONFIG["production"]
+
+
+def test_featured_uses_default_status_for_missing_status_field():
+    rows: list[Mapping[str, Any]] = [
+        {
+            "href": "https://example.com/project",
+            "image_url": "https://example.com/project.png",
+            "title": "Example Project",
+        }
+    ]
+    api = SupabaseAPI()
+    api.supabase = StubSupabaseClient(rows)  # type: ignore[assignment]
+
+    result = api.featured()
+
+    assert len(result) == 1
+    assert (
+        result[0].status
+        == featured_const.PROJECT_STATUS_CONFIG[
+            featured_const.DEFAULT_PROJECT_STATUS_KEY
+        ]
+    )
+
+
+def test_featured_uses_default_status_for_non_string_status_values():
+    rows: list[Mapping[str, Any]] = [
+        {
+            "href": "https://example.com/project-bool",
+            "image_url": "https://example.com/project-bool.png",
+            "title": "Boolean Status Project",
+            "status": True,
+        },
+        {
+            "href": "https://example.com/project-int",
+            "image_url": "https://example.com/project-int.png",
+            "title": "Integer Status Project",
+            "status": 1,
+        },
+    ]
+    api = SupabaseAPI()
+    api.supabase = StubSupabaseClient(rows)  # type: ignore[assignment]
+
+    result = api.featured()
+
+    assert len(result) == 2
+    default_status = featured_const.PROJECT_STATUS_CONFIG[
+        featured_const.DEFAULT_PROJECT_STATUS_KEY
+    ]
+    assert [item.status for item in result] == [default_status, default_status]
+    assert result[0].status != featured_const.PROJECT_STATUS_CONFIG["production"]
 
 
 def test_featured_skips_rows_missing_required_contract_fields():
@@ -279,4 +374,7 @@ def test_featured_logs_fail_closed_warning_when_execute_raises(caplog):
     assert result == []
     assert caplog.records[-1].message == "supabase_featured_fetch_failed_closed"
     assert caplog.records[-1].event == "supabase_featured_fetch_failed_closed"
+    assert caplog.records[-1].integration == "supabase"
+    assert caplog.records[-1].operation == "featured"
+    assert caplog.records[-1].fail_closed is True
     assert caplog.records[-1].error_type == "RuntimeError"

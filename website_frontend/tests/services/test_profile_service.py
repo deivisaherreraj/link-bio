@@ -1,3 +1,5 @@
+import pytest
+
 from website_frontend.model.avatar_status import AvatarStatus
 from website_frontend.services import profile_service
 
@@ -20,6 +22,40 @@ def test_build_avatar_status_normalizes_input():
 
 def test_build_avatar_status_falls_back_for_unknown_key():
     result = profile_service.build_avatar_status("desconocido")
+
+    assert result.key == "activo"
+    assert result.class_name == "is-active"
+
+
+def test_build_avatar_status_falls_back_for_blank_key():
+    result = profile_service.build_avatar_status(' "  " ')
+
+    assert result.key == "activo"
+    assert result.class_name == "is-active"
+
+
+@pytest.mark.parametrize(
+    ("raw_key", "coerced_key"),
+    [
+        (None, "none"),
+        (True, "true"),
+        (123, "123"),
+    ],
+)
+def test_build_avatar_status_rejects_non_string_keys_even_if_coercion_would_match(
+    monkeypatch, raw_key, coerced_key
+):
+    monkeypatch.setitem(
+        profile_service.profile_const.AVAILABILITY_STATES,
+        coerced_key,
+        {
+            "text": "Coerced Match",
+            "class_name": "is-coerced-match",
+            "icon": "fa-mask",
+        },
+    )
+
+    result = profile_service.build_avatar_status(raw_key)
 
     assert result.key == "activo"
     assert result.class_name == "is-active"
