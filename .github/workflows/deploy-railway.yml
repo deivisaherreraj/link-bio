@@ -38,7 +38,7 @@ jobs:
 
     - name: Run quality checks
       run: |
-        uv run pytest tests/integrations tests/services tests/shared tests/api tests/state
+        uv run pytest tests/integrations tests/services tests/shared tests/api tests/state tests/components tests/views/test_profile.py tests/test_rxconfig.py
         uv run ruff check .
         uv run ruff format --check .
         uv run mypy

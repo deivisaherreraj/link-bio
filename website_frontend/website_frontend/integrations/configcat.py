@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from datetime import datetime
 from typing import Any, TypeGuard
@@ -8,7 +9,10 @@ import dotenv
 
 import website_frontend.constants.profile_constants as profile_const
 import website_frontend.constants.site_constants as site_const
+from website_frontend.integrations.observability import fail_closed_event
 from website_frontend.shared.schedule_types import LiveSchedule, WeekdayKey
+
+logger = logging.getLogger(__name__)
 
 
 def _is_weekday_key(value: object) -> TypeGuard[WeekdayKey]:
@@ -28,7 +32,20 @@ class ConfigCatAPI:
         if not hasattr(self, "configcat"):
             return default
 
-        response: Any = self.configcat.get_value(key, default)
+        try:
+            response: Any = self.configcat.get_value(key, default)
+        except Exception as exc:
+            logger.warning(
+                "configcat_get_value_failed_closed",
+                extra=fail_closed_event(
+                    event="configcat_get_value_failed_closed",
+                    integration="configcat",
+                    operation="get_value",
+                    context={"key": key, "error_type": type(exc).__name__},
+                ),
+            )
+            return default
+
         if not isinstance(response, str):
             return default
 
