@@ -18,17 +18,6 @@ index_meta = [
     *_meta,
 ]
 
-courses_title = "DHerreraJDev | Guías/Tutoriales gratis de programación"
-courses_description = (
-    "Este es un listado con algunas guías y tutoriales para aprender "
-    "programación y desarrollo de software."
-)
-courses_meta = [
-    {"name": "og:title", "content": courses_title},
-    {"name": "og:description", "content": courses_description},
-    *_meta,
-]
-
 blog_title = "DHerreraJDev | Blog de desarrollo de software"
 blog_description = (
     "Artículos, reflexiones y experiencias sobre desarrollo de software, "

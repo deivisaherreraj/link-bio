@@ -1,6 +1,9 @@
 .atl/
 .codegraph/
 .engram/
+.mypy_cache/
 openspec/
+.pytest_cache/
+.ruff_cache/
 
 website_frontend/.python-version

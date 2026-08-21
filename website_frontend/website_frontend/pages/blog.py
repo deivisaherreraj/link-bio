@@ -3,7 +3,7 @@ import reflex as rx
 import website_frontend.shared.browser as browser
 import website_frontend.shared.meta as meta
 from website_frontend.routes import Route
-from website_frontend.styles.colors import TextColor
+from website_frontend.views.status_page import status_page
 
 
 @rx.page(
@@ -16,8 +16,12 @@ from website_frontend.styles.colors import TextColor
 def blog() -> rx.Component:
     return rx.box(
         browser.lang(),
-        rx.text(
-            "Página del blog - Próximamente",
-            color=TextColor.BODY.value,
+        status_page(
+            title="Blog próximamente",
+            message=(
+                "Estoy preparando artículos sobre desarrollo de software, "
+                "arquitectura y lecciones prácticas de proyectos reales."
+            ),
+            icon="fa-solid fa-pen-ruler",
         ),
     )

@@ -4,7 +4,6 @@ from enum import Enum
 # Define las rutas de la aplicación web
 class Route(Enum):
     INDEX = "/"
-    COURSES = "/courses"
     BLOG = "/blog"
     BLOG_ARTICLE = "/blog/[slug]"
     MAINTENANCE = "/maintenance"

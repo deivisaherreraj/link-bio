@@ -3,8 +3,9 @@ import reflex as rx
 import website_frontend.constants.site_constants as const
 import website_frontend.pages.blog  # noqa: F401
 import website_frontend.pages.blog_article  # noqa: F401
-import website_frontend.pages.courses  # noqa: F401
 import website_frontend.pages.index  # noqa: F401
+import website_frontend.pages.maintenance  # noqa: F401
+import website_frontend.pages.not_found  # noqa: F401
 import website_frontend.styles.styles as styles
 
 # Importa la aplicación FastAPI desde el módulo api

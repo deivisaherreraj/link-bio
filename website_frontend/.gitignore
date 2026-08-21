@@ -19,6 +19,10 @@
 *.so
 *.swo
 *.swp
+.hypothesis/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
 .DS_Store
 .env
 .idea/
@@ -32,10 +36,12 @@ ENV/
 Thumbs.db
 __pycache__/
 assets/external/
+backend.zip
 build/
 dist/
 docker-compose.override.yml
 env/
 frontend/
+frontend.zip
 public/
 venv/
