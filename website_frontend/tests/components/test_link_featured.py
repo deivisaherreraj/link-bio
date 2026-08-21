@@ -34,6 +34,7 @@ def test_link_featured_renders_optional_actions_when_present() -> None:
     assert "Example description" in rendered
     assert "Python" in rendered
     assert "Reflex" in rendered
+    assert 'to:"https://example.com/project"' in rendered
     assert "https://github.com/example/project" in rendered
     assert "https://example.com/live" in rendered
     assert "Ver proyecto en vivo" in rendered
@@ -56,27 +57,5 @@ def test_link_featured_hides_optional_actions_when_links_are_missing() -> None:
 
     assert "Example Project" in rendered
     assert 'to:"https://example.com/project"' in rendered
-    assert 'aria-label={"Ver c\u00f3digo en GitHub"}' not in rendered
-    assert 'aria-label={"Ver proyecto en vivo"}' not in rendered
-
-
-def test_link_featured_disables_invalid_detail_link_and_hides_invalid_actions() -> None:
-    component = link_featured(
-        _build_featured(
-            href="javascript:alert('xss')",
-            github_url="#",
-            live_url="not-a-url",
-        )
-    )
-
-    rendered = str(component)
-
-    assert "to:\"javascript:alert('xss')\"" not in rendered
-    assert 'to:"#"' in rendered
-    assert 'target:(false ? "_blank" : "")' in rendered
-    assert (
-        '"pointerEvents" : "none"' in rendered
-        or '["pointerEvents"] : "none"' in rendered
-    )
     assert 'aria-label={"Ver c\u00f3digo en GitHub"}' not in rendered
     assert 'aria-label={"Ver proyecto en vivo"}' not in rendered

@@ -2,9 +2,15 @@ import reflex as rx
 
 from website_frontend.components.status_badge import status_badge
 from website_frontend.model.featured import Featured
-from website_frontend.shared.urls import is_actionable_external_url
 from website_frontend.styles.fonts import FontSize, FontWeight
 from website_frontend.styles.styles import Color, Margin, Padding, Spacing
+
+
+def _link_href(url: str | None | rx.Var) -> str | rx.Var:
+    if hasattr(url, "to"):
+        return url.to(str)
+
+    return url or "#"
 
 
 def link_featured(featured: Featured) -> rx.Component:
@@ -14,13 +20,6 @@ def link_featured(featured: Featured) -> rx.Component:
     - Usa un componente independiente status_badge para el badge.
     - Renderiza technologies con rx.foreach y flex-wrap.
     """
-    details_is_actionable = is_actionable_external_url(featured.href)
-    details_href = featured.href if details_is_actionable else "#"
-    details_class_name = "transition-colors z-10"
-
-    if details_is_actionable:
-        details_class_name = f"{details_class_name} hover:text-primary-light"
-
     return rx.flex(
         # Título + badge de estado
         rx.hstack(
@@ -32,11 +31,7 @@ def link_featured(featured: Featured) -> rx.Component:
                 flex="1 1 0%",
                 as_="h3",
             ),
-            # Badge de estado (solo si status_info existe)
-            rx.cond(
-                featured.status,
-                status_badge(featured.status),
-            ),
+            status_badge(featured.status),
             align_items="flex-start",
             justify="between",
             direction="column-reverse",
@@ -89,8 +84,8 @@ def link_featured(featured: Featured) -> rx.Component:
                     spacing=Spacing.VERY_SMALL.value,
                     align="center",
                 ),
-                href=details_href,
-                is_external=details_is_actionable,
+                href=featured.href,
+                is_external=True,
                 font_size=FontSize.SMALL.value,
                 font_weight=FontWeight.MEDIUM.value,
                 color=Color.PRIMARY.value,
@@ -98,17 +93,15 @@ def link_featured(featured: Featured) -> rx.Component:
                 align_items="center",
                 gap="0.25rem",
                 z_index="10",
-                pointer_events="auto" if details_is_actionable else "none",
-                opacity="1" if details_is_actionable else "0.6",
                 aria_label=f"Ver detalles del proyecto {featured.title}",
-                class_name=details_class_name,
+                class_name="transition-colors z-10 hover:text-primary-light",
             ),
             rx.hstack(
                 rx.cond(
-                    is_actionable_external_url(featured.github_url),
+                    featured.github_url is not None,
                     rx.link(
                         rx.icon("github"),
-                        href=featured.github_url,
+                        href=_link_href(featured.github_url),
                         is_external=True,
                         aria_label="Ver código en GitHub",
                         color=Color.GRAY.value,
@@ -117,10 +110,10 @@ def link_featured(featured: Featured) -> rx.Component:
                     ),
                 ),
                 rx.cond(
-                    is_actionable_external_url(featured.live_url),
+                    featured.live_url is not None,
                     rx.link(
                         rx.icon("external-link"),
-                        href=featured.live_url,
+                        href=_link_href(featured.live_url),
                         is_external=True,
                         aria_label="Ver proyecto en vivo",
                         color=Color.GRAY.value,
