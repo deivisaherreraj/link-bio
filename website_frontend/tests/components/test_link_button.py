@@ -31,6 +31,22 @@ def test_link_button_enabled_state_keeps_redirect() -> None:
     assert "https://example.com" in rendered
 
 
+def test_link_button_internal_navigation_uses_same_tab_redirect() -> None:
+    component = link_button(
+        href="/blog",
+        title="Blog",
+        description="Internal route",
+        icon="fa-solid fa-star",
+        is_external=False,
+    )
+
+    rendered = str(component)
+
+    assert 'ReflexEvent("_redirect"' in rendered
+    assert '["path"] : "/blog"' in rendered
+    assert '["external"] : false' in rendered
+
+
 def test_link_button_placeholder_href_disables_navigation() -> None:
     component = link_button(
         href="#",

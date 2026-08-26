@@ -1,7 +1,5 @@
 import reflex as rx
 
-import website_frontend.constants.site_constants as const
-from website_frontend.components.link_button import link_button
 from website_frontend.components.link_featured import link_featured
 from website_frontend.components.section import section
 from website_frontend.components.ui.auto_scrolling_carousel import (
@@ -10,9 +8,132 @@ from website_frontend.components.ui.auto_scrolling_carousel import (
 from website_frontend.components.ui.direction_aware_hover import (
     direction_aware_hover,
 )
-from website_frontend.routes import Route
+from website_frontend.model.social_link import SocialLink
 from website_frontend.state.page_state import PageState
-from website_frontend.styles.styles import Color, Spacing
+from website_frontend.styles.colors import BackgroundColor, BorderColor
+from website_frontend.styles.fonts import FontSize, FontWeight
+from website_frontend.styles.styles import Color, Margin, Padding, Spacing
+
+
+def render_social_link(link: SocialLink) -> rx.Component:
+    return rx.link(
+        rx.hstack(
+            rx.box(
+                rx.el.I.create(
+                    class_name=link.icon,
+                    style={"color": Color.WHITE.value},
+                ),
+                font_size=FontSize.DEFAULT.value,
+                color=Color.WHITE.value,
+                width="32px",
+                height="32px",
+                min_width="32px",
+                display="flex",
+                align_items="center",
+                justify_content="center",
+                flex_shrink=0,
+                border_radius="8px",
+                background_color=BackgroundColor.LIGHT.value,
+                border=f"1px solid {Color.BG_WHITE_TRANSPARENT.value}",
+            ),
+            rx.box(
+                rx.hstack(
+                    rx.text(
+                        link.label,
+                        color=Color.WHITE.value,
+                        font_weight=FontWeight.SEMI_BOLD.value,
+                        font_size=FontSize.MEDIUM.value,
+                        as_="span",
+                        line_height="1.2",
+                    ),
+                    rx.cond(
+                        link.badge != None,
+                        rx.text(
+                            link.badge,
+                            font_size=FontSize.TINY.value,
+                            font_weight=FontWeight.MEDIUM.value,
+                            color=Color.WHITE.value,
+                            padding=f"{Padding.SMALL.value} {Padding.MEDIUM.value}",
+                            border_radius="999px",
+                            line_height="1",
+                            text_transform="uppercase",
+                            letter_spacing="0.02em",
+                            background_color=rx.cond(
+                                link.badge_color != None,
+                                link.badge_color,
+                                Color.PRIMARY.value,
+                            ),
+                            border=f"1px solid {Color.BG_WHITE_TRANSPARENT.value}",
+                            as_="span",
+                        ),
+                    ),
+                    display="flex",
+                    align_items="start",
+                    justify_content="space-between",
+                    width="100%",
+                    flex_wrap="wrap",
+                    gap="8px",
+                    margin_bottom=Margin.VERY_SMALL.value,
+                ),
+                rx.text(
+                    rx.cond(link.description != None, link.description, ""),
+                    font_size=FontSize.TINY.value,
+                    color=Color.GRAY.value,
+                    as_="span",
+                    line_height="1.45",
+                    class_name="line-clamp-2",
+                ),
+                flex_grow=1,
+                flex_shrink=1,
+                flex_basis="0%",
+                display="flex",
+                flex_direction="column",
+                text_align="left",
+            ),
+            rx.box(
+                rx.icon(
+                    "chevron-right",
+                    size=18,
+                    color=Color.GRAY.value,
+                ),
+                display="flex",
+                align_items="center",
+                justify_content="center",
+                align_self="center",
+                flex_shrink=0,
+                padding_left=Padding.SMALL.value,
+            ),
+            align="start",
+            spacing=Spacing.EXTRA_SMALL.value,
+            width="100%",
+        ),
+        href=rx.cond(link.is_active, link.url, "#"),
+        is_external=link.is_external,
+        width="100%",
+        display="block",
+        text_decoration="none",
+        opacity=rx.cond(link.is_active, "1", "0.42"),
+        filter=rx.cond(link.is_active, "none", "saturate(0.65)"),
+        pointer_events=rx.cond(link.is_active, "auto", "none"),
+        padding="12px",
+        border_radius="12px",
+        min_height="84px",
+        background=rx.cond(
+            link.is_active,
+            BackgroundColor.SURFACE.value,
+            "linear-gradient(180deg, #0b1016 0%, #090d12 100%)",
+        ),
+        box_shadow=rx.cond(
+            link.border_color != None,
+            f"0 0 0 1px {Color.WHITE_TRANSPARENT.value}, 0 14px 32px rgba(0, 0, 0, 0.28)",
+            "0 12px 28px rgba(0, 0, 0, 0.2)",
+        ),
+        border=rx.cond(
+            link.border_color != None,
+            f"2px solid {link.border_color}",
+            f"1px solid {BorderColor.DEFAULT.value}",
+        ),
+    )
 
 
 def links() -> rx.Component:
@@ -21,6 +142,14 @@ def links() -> rx.Component:
             PageState.featured_info,
             section(
                 "Proyectos Destacados",
+                rx.text(
+                    "Una selección breve de productos, experimentos y builds activos.",
+                    font_size=FontSize.SMALL.value,
+                    font_weight=FontWeight.NORMAL.value,
+                    color=Color.GRAY.value,
+                    margin_top=Margin.ZERO.value,
+                    as_="p",
+                ),
                 auto_scrolling_carousel(
                     reactive_list=PageState.featured_info,
                     render_function=lambda featured: rx.flex(
@@ -28,8 +157,8 @@ def links() -> rx.Component:
                             image_url=featured.image_url,
                             children=link_featured(featured),
                         ),
-                        width="350px",
-                        height="280px",
+                        width="360px",
+                        height="288px",
                         align_items="center",
                         justify_content="center",
                     ),
@@ -40,124 +169,21 @@ def links() -> rx.Component:
         ),
         section(
             "Plataformas de trabajo",
-            link_button(
-                href=const.WORKANA_URL,
-                title="Workana",
-                description=(
-                    "Perfil donde ofrezco mis servicios profesionales de desarrollo."
-                ),
-                icon="fa-solid fa-briefcase",
-                icon_color=Color.WHITE.value,
-                badge="Freelance",
-                badge_color=Color.PRIMARY.value,
-            ),
-            link_button(
-                href=const.GUMROAD_URL,
-                title="Gumroad",
-                description=(
-                    "Tienda de recursos, plantillas y cursos sobre desarrollo "
-                    "Full-Stack."
-                ),
-                icon="fa-solid fa-store",
-                icon_color=Color.WHITE.value,
-                badge="Productos digitales",
-                badge_color=Color.PINK.value,
-            ),
+            rx.foreach(PageState.work_social_links, render_social_link),
         ),
         section(
             "Comunidad",
-            link_button(
-                href=const.DISCORD_URL,
-                title="Discord",
-                description="Únete al chat para discutir tecnologías y proyectos.",
-                icon="fa-brands fa-discord",
-                icon_color=Color.DISCORD.value,
-                badge="Comunidad",
-                badge_color=Color.DISCORD.value,
-            ),
-            link_button(
-                href=const.YOUTUBE_URL,
-                title="YouTube",
-                description="Tutoriales de .NET, Angular y arquitectura de software.",
-                icon="fa-brands fa-youtube",
-                icon_color=Color.RED.value,
-            ),
-            link_button(
-                href=const.TWITCH_URL,
-                title="Twitch",
-                description="Live coding y sesiones de preguntas y respuestas.",
-                icon="fa-brands fa-twitch",
-                icon_color=Color.PURPLE.value,
-            ),
+            rx.foreach(PageState.community_social_links, render_social_link),
         ),
         section(
             "Recursos y más",
-            link_button(
-                href=Route.BLOG.value,
-                title="Mi Blog (Artículos Técnicos)",
-                description=(
-                    "Publicaciones sobre arquitectura, patrones de diseño y Full-Stack."
-                ),
-                icon="fa-solid fa-newspaper",
-                icon_color=Color.WHITE.value,
-                badge="Featured",
-                badge_color=Color.PRIMARY.value,
-                border_color=Color.PRIMARY.value,
-            ),
-            link_button(
-                href=const.DEIVISAHERRERAJ_URL,
-                title="Mi Portafolio Web",
-                description="Explora proyectos a profundidad y experiencia detallada.",
-                icon="fa-solid fa-briefcase",
-                icon_color=Color.WHITE.value,
-                border_color=Color.PRIMARY.value,
-            ),
-            link_button(
-                href=const.SETUP_URL,
-                title="Mi setup",
-                description="Listado de hardware y software que utilizo diariamente.",
-                icon="fa-solid fa-desktop",
-                icon_color=Color.WHITE.value,
-                badge="Setup",
-                badge_color=Color.GRAY_DARK.value,
-            ),
-            link_button(
-                href=const.COFFEE_URL,
-                title="Invítame a un café",
-                description=(
-                    "Apoya mi contenido y desarrollo con una pequeña contribución."
-                ),
-                icon="fa-solid fa-mug-hot",
-                icon_color=Color.WHITE.value,
-                badge="Apoyo",
-                badge_color=Color.ORANGE.value,
-            ),
+            rx.foreach(PageState.resources_social_links, render_social_link),
         ),
         section(
             "Contacto",
-            link_button(
-                href=const.MYPUBLICINBOX_URL,
-                title="My Public Inbox",
-                description=(
-                    "Para consultas rápidas y profesionales con prioridad de respuesta."
-                ),
-                icon="fa-solid fa-inbox",
-                icon_color=Color.WHITE.value,
-                badge="Directo",
-                badge_color=Color.PRIMARY.value,
-            ),
-            link_button(
-                href=f"mailto:{const.EMAIL}",
-                title="Email",
-                description="Envíame un correo electrónico para consultas directas.",
-                icon="fa-solid fa-envelope",
-                icon_color=Color.WHITE.value,
-                badge="Correo",
-                badge_color=Color.GRAY_DARK.value,
-                is_external=False,
-            ),
+            rx.foreach(PageState.contact_social_links, render_social_link),
         ),
         width="100%",
         spacing=Spacing.DEFAULT.value,
-        on_mount=PageState.featured_links,
+        on_mount=[PageState.featured_links, PageState.load_social_links],
     )

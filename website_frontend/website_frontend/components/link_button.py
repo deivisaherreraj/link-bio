@@ -4,7 +4,7 @@ import website_frontend.styles.styles as styles
 from website_frontend.shared.urls import is_actionable_href
 from website_frontend.styles.colors import BackgroundColor, Color
 from website_frontend.styles.fonts import FontSize, FontWeight
-from website_frontend.styles.styles import Margin, Padding, Size
+from website_frontend.styles.styles import Margin, Padding, Size, Spacing
 
 
 def link_button(
@@ -27,8 +27,14 @@ def link_button(
     if animated:
         class_name = f"{class_name} {styles.BOUNCEIN_ANIMATION}"
 
-    # Estilos inline (disabled, border, shadow)
-    style: dict[str, str] = {}
+    style: dict[str, str] = {
+        "padding": "18px 14px",
+        "marginBottom": Margin.ZERO.value,
+        "borderRadius": "18px",
+        "minHeight": "96px",
+        "background": "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.05) 100%)",
+        "boxShadow": "0 18px 44px rgba(0, 0, 0, 0.22)",
+    }
 
     if is_disabled:
         style.update(
@@ -38,13 +44,12 @@ def link_button(
             }
         )
 
-    # Estilo de borde y sombra cuando se fuerza un color
     if border_color is not None:
         style.update(
             {
                 "borderColor": border_color,
                 "border": f"2px solid {border_color}",
-                "boxShadow": f"0 0 15px {Color.WHITE_TRANSPARENT.value}",
+                "boxShadow": f"0 18px 45px {Color.WHITE_TRANSPARENT.value}",
             }
         )
 
@@ -66,7 +71,6 @@ def link_button(
 
     return rx.button(
         rx.hstack(
-            # Icon wrapper
             rx.cond(
                 has_visual,
                 rx.box(
@@ -86,30 +90,28 @@ def link_button(
                     ),
                     font_size=FontSize.DEFAULT.value,
                     color=Color.WHITE.value,
-                    width="32px",
-                    height="32px",
-                    min_width="32px",
+                    width="44px",
+                    height="44px",
+                    min_width="44px",
                     display="flex",
                     align_items="center",
                     justify_content="center",
                     flex_shrink=0,
-                    margin_right=Margin.LARGE.value,
-                    border_radius="8px",
+                    border_radius="14px",
                     background_color=BackgroundColor.LIGHT.value,
+                    border=f"1px solid {Color.BG_WHITE_TRANSPARENT.value}",
                 ),
             ),
-            # Texto
             rx.box(
                 rx.hstack(
-                    # Título
                     rx.text(
                         title,
                         color=Color.WHITE.value,
-                        font_weight=FontWeight.MEDIUM.value,
+                        font_weight=FontWeight.SEMI_BOLD.value,
                         font_size=FontSize.MEDIUM.value,
                         as_="span",
+                        line_height="1.2",
                     ),
-                    # Badge (si aplica)
                     rx.cond(
                         badge,
                         rx.text(
@@ -118,26 +120,36 @@ def link_button(
                             font_weight=FontWeight.MEDIUM.value,
                             color=Color.WHITE.value,
                             padding=(
-                                f"{Padding.VERY_SMALL.value} {Padding.MEDIUM.value}"
+                                f"{Padding.SMALL.value} {Padding.MEDIUM.value}"
                             ),
-                            border_radius="6px",
+                            border_radius="999px",
                             line_height="1",
-                            style={"backgroundColor": badge_color}
+                            text_transform="uppercase",
+                            letter_spacing="0.02em",
+                            style={
+                                "backgroundColor": badge_color,
+                                "border": f"1px solid {Color.BG_WHITE_TRANSPARENT.value}",
+                            }
                             if badge_color
-                            else None,
+                            else {"border": f"1px solid {Color.BG_WHITE_TRANSPARENT.value}"},
                             as_="span",
                         ),
                     ),
                     display="flex",
-                    align_items="center",
+                    align_items="start",
+                    justify_content="space-between",
+                    width="100%",
+                    flex_wrap="wrap",
                     gap="8px",
-                    margin_bottom=Margin.SMALL.value,
+                    margin_bottom=Margin.VERY_SMALL.value,
                 ),
                 rx.text(
                     description,
                     font_size=FontSize.TINY.value,
                     color=Color.GRAY.value,
                     as_="span",
+                    line_height="1.45",
+                    class_name="line-clamp-2",
                 ),
                 flex_grow=1,
                 flex_shrink=1,
@@ -146,7 +158,21 @@ def link_button(
                 flex_direction="column",
                 text_align="left",
             ),
-            align="center",
+            rx.box(
+                rx.icon(
+                    "chevron-right",
+                    size=18,
+                    color=Color.GRAY.value,
+                ),
+                display="flex",
+                align_items="center",
+                justify_content="center",
+                align_self="center",
+                flex_shrink=0,
+                padding_left=Padding.SMALL.value,
+            ),
+            align="start",
+            spacing=Spacing.SMALL.value,
             width="100%",
         ),
         disabled=is_disabled or not is_actionable,

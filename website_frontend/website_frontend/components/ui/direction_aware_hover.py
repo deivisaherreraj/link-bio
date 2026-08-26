@@ -4,7 +4,7 @@ from website_frontend.styles.styles import Color, Padding
 
 
 def direction_aware_hover(
-    image_url: str,
+    image_url: str | None,
     children: rx.Component,
 ) -> rx.Component:
     """
@@ -27,15 +27,17 @@ def direction_aware_hover(
                 bg_color=Color.BG_BLACK_TRANSPARENT.value,
                 class_name="group-hover:block transition duration-500",
             ),
-            # Imagen de fondo
-            rx.image(
-                src=image_url,
-                alt="",
-                position="absolute",
-                inset="0",
-                width="100%",
-                height="100%",
-                object_fit="cover",
+            rx.cond(
+                image_url != None,
+                rx.image(
+                    src=image_url,
+                    alt="",
+                    position="absolute",
+                    inset="0",
+                    width="100%",
+                    height="100%",
+                    object_fit="cover",
+                ),
             ),
             # Contenido animado (overlay)
             rx.flex(
@@ -56,6 +58,9 @@ def direction_aware_hover(
             position="relative",
             height="100%",
             width="100%",
+            background=(
+                "linear-gradient(135deg, rgba(99, 102, 241, 0.28) 0%, rgba(15, 23, 42, 0.92) 100%)"
+            ),
         ),
         position="relative",
         overflow="hidden",

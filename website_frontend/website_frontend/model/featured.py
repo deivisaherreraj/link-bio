@@ -6,8 +6,8 @@ from website_frontend.model.project_status import ProjectStatus
 
 
 class Featured(BaseModel):
-    href: str
-    image_url: str
+    href: Optional[str] = None
+    image_url: Optional[str] = None
     title: str
     description: Optional[str] = None
     technologies: List[str] = Field(default_factory=list)

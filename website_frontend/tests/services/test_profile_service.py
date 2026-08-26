@@ -1,6 +1,7 @@
 import pytest
 
 from website_frontend.model.avatar_status import AvatarStatus
+from website_frontend.model.profile import Profile
 from website_frontend.services import profile_service
 
 
@@ -10,6 +11,14 @@ class StubConfigCatAPI:
 
     def avatar_status(self) -> str:
         return self.avatar_status_key
+
+
+class StubSupabaseAPI:
+    def __init__(self, profile: Profile | None) -> None:
+        self.profile_value = profile
+
+    def profile(self) -> Profile | None:
+        return self.profile_value
 
 
 def test_build_avatar_status_normalizes_input():
@@ -132,3 +141,70 @@ def test_build_avatar_status_falls_back_for_incomplete_catalog_entry(monkeypatch
 
     assert result.key == "activo"
     assert result.class_name == "is-active"
+
+
+def test_get_profile_returns_supabase_profile(monkeypatch):
+    expected = Profile(
+        full_name="Deivis Herrera",
+        handle="@dherrerajdev",
+        headline="Headline",
+        bio_short="Short bio",
+        avatar_url="https://example.com/avatar.png",
+        email="deivis@example.com",
+        availability_status_key="empleo",
+        tech_stack_summary="Python, Reflex",
+        primary_socials=[],
+    )
+    monkeypatch.setattr(
+        profile_service,
+        "SUPABASE_API",
+        StubSupabaseAPI(expected),
+    )
+
+    result = profile_service.get_profile()
+
+    assert result == expected
+
+
+def test_get_profile_falls_back_to_default_profile(monkeypatch):
+    monkeypatch.setattr(
+        profile_service,
+        "SUPABASE_API",
+        StubSupabaseAPI(None),
+    )
+
+    result = profile_service.get_profile()
+
+    assert result == profile_service.get_default_profile()
+
+
+def test_get_default_profile_restores_published_fallback_copy() -> None:
+    profile = profile_service.get_default_profile()
+
+    assert profile.bio_short == (
+        "Desarrollador Full-Stack con experiencia creando soluciones de alto "
+        "impacto y software confiable, tanto del lado del Back-End como del "
+        "Front-End. Acá vas a encontrar mis trabajos, contacto y perfiles "
+        "profesionales."
+    )
+    assert (
+        profile.tech_stack_summary
+        == "Especializado en desarrollo web moderno y arquitecturas escalables"
+    )
+
+
+def test_get_primary_social_url_returns_active_social_match():
+    profile = profile_service.get_default_profile()
+
+    result = profile_service.get_primary_social_url(profile, " github ")
+
+    assert result == "https://github.com/deivisaherreraj"
+
+
+def test_get_primary_social_url_skips_inactive_social():
+    profile = profile_service.get_default_profile()
+    profile.primary_socials[0].is_active = False
+
+    result = profile_service.get_primary_social_url(profile, "GitHub")
+
+    assert result is None

@@ -39,6 +39,9 @@ def test_link_featured_renders_optional_actions_when_present() -> None:
     assert "https://example.com/live" in rendered
     assert "Ver proyecto en vivo" in rendered
     assert "En Producci\\u00f3n" in rendered
+    assert "Proyecto destacado" in rendered
+    assert "C\\u00f3digo abierto" in rendered
+    assert "Live demo" in rendered
     assert '"padingY"' not in rendered
     assert '"paddingTop"' in rendered
 
@@ -59,3 +62,29 @@ def test_link_featured_hides_optional_actions_when_links_are_missing() -> None:
     assert 'to:"https://example.com/project"' in rendered
     assert 'aria-label={"Ver c\u00f3digo en GitHub"}' not in rendered
     assert 'aria-label={"Ver proyecto en vivo"}' not in rendered
+    assert "C\\u00f3digo abierto" not in rendered
+    assert "Live demo" not in rendered
+
+
+def test_link_featured_uses_internal_navigation_for_internal_routes() -> None:
+    component = link_featured(_build_featured(href="/blog/example-project"))
+
+    rendered = str(component)
+
+    assert 'to:"/blog/example-project"' in rendered
+    assert 'target:(false ? "_blank" : "")' in rendered
+
+
+def test_link_featured_hides_details_action_when_href_is_missing() -> None:
+    component = link_featured(
+        _build_featured(
+            href=None,
+            github_url="https://github.com/example/project",
+            live_url=None,
+        )
+    )
+
+    rendered = str(component)
+
+    assert 'aria-label={"Ver detalles del proyecto Example Project"}' not in rendered
+    assert "https://github.com/example/project" in rendered

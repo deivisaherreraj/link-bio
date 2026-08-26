@@ -1,10 +1,50 @@
 import website_frontend.constants.profile_constants as profile_const
 import website_frontend.constants.site_constants as site_const
 from website_frontend.integrations.configcat import ConfigCatAPI
+from website_frontend.integrations.supabase import SupabaseAPI
 from website_frontend.model.avatar_status import AvatarStatus
+from website_frontend.model.primary_social import PrimarySocial
+from website_frontend.model.profile import Profile
 from website_frontend.model.tech_badge import TechBadge
 
 CONFIGCAT_API = ConfigCatAPI()
+SUPABASE_API = SupabaseAPI()
+
+
+def _default_profile() -> Profile:
+    return Profile(
+        full_name="Herrera, Deivis",
+        handle="@dherrerajdev",
+        headline="Full-Stack Developer & Tech Enthusiast",
+        bio_short=(
+            "Desarrollador Full-Stack con experiencia creando soluciones de alto "
+            "impacto y software confiable, tanto del lado del Back-End como del "
+            "Front-End. Acá vas a encontrar mis trabajos, contacto y perfiles "
+            "profesionales."
+        ),
+        avatar_url="/avatar.jpeg",
+        email=site_const.EMAIL,
+        availability_status_key=site_const.AVAILABILITY_STATUS_DEFAULT,
+        tech_stack_summary=(
+            "Especializado en desarrollo web moderno y arquitecturas escalables"
+        ),
+        primary_socials=[
+            PrimarySocial(
+                label="GitHub",
+                url=site_const.GITHUB_URL,
+                icon="fa-brands fa-github",
+                is_active=True,
+                priority=1,
+            ),
+            PrimarySocial(
+                label="LinkedIn",
+                url=site_const.LINKEDIN_URL,
+                icon="fa-brands fa-linkedin",
+                is_active=True,
+                priority=2,
+            ),
+        ],
+    )
 
 
 def _resolve_avatar_state(key: str) -> tuple[str, dict[str, str]]:
@@ -90,3 +130,32 @@ def get_profile_technologies() -> list[TechBadge]:
         )
 
     return badges
+
+
+def get_default_profile() -> Profile:
+    return _default_profile()
+
+
+def get_profile() -> Profile:
+    profile = SUPABASE_API.profile()
+    if profile is None:
+        return get_default_profile()
+
+    return profile
+
+
+def get_primary_social_url(profile: Profile, label: str) -> str | None:
+    normalized_label = label.strip().lower()
+    if not normalized_label:
+        return None
+
+    for social in profile.primary_socials:
+        if not social.is_active:
+            continue
+
+        if social.label.strip().lower() != normalized_label:
+            continue
+
+        return social.url
+
+    return None

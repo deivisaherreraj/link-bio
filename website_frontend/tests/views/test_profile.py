@@ -15,11 +15,11 @@ def test_profile_email_link_is_not_opened_as_external_tab() -> None:
     component = profile(
         name="Deivis",
         handle="@dherrerajdev",
-        tagline="Tagline",
-        tech_stack="Stack",
+        headline="Tagline",
+        tech_stack_summary="Stack",
         avatar_url="/avatar.jpeg",
         avatar_status=_avatar_status(),
-        email_url="mailto:test@example.com",
+        email="test@example.com",
     )
 
     rendered = str(component)
@@ -32,8 +32,8 @@ def test_profile_external_social_links_keep_external_target() -> None:
     component = profile(
         name="Deivis",
         handle="@dherrerajdev",
-        tagline="Tagline",
-        tech_stack="Stack",
+        headline="Tagline",
+        tech_stack_summary="Stack",
         avatar_url="/avatar.jpeg",
         avatar_status=_avatar_status(),
         github_url="https://github.com/example",
@@ -51,13 +51,13 @@ def test_profile_hides_blank_social_links() -> None:
     component = profile(
         name="Deivis",
         handle="@dherrerajdev",
-        tagline="Tagline",
-        tech_stack="Stack",
+        headline="Tagline",
+        tech_stack_summary="Stack",
         avatar_url="/avatar.jpeg",
         avatar_status=_avatar_status(),
         github_url=" ",
         linkedin_url="",
-        email_url="mailto:test@example.com",
+        email="test@example.com",
     )
 
     rendered = str(component)

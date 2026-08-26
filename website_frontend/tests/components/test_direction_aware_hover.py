@@ -14,3 +14,16 @@ def test_direction_aware_hover_uses_decorative_background_alt() -> None:
     assert 'alt:""' in rendered
     assert 'alt:"Background"' not in rendered
     assert "/images/example.png" in rendered
+
+
+def test_direction_aware_hover_supports_missing_image_url() -> None:
+    component = direction_aware_hover(
+        image_url=None,
+        children=rx.text("Contenido"),
+    )
+
+    rendered = str(component)
+
+    assert "Contenido" in rendered
+    assert "src:" not in rendered
+    assert "linear-gradient(135deg" in rendered

@@ -5,7 +5,10 @@ from typing import Any, cast
 from website_frontend.model.avatar_status import AvatarStatus
 from website_frontend.model.featured import Featured
 from website_frontend.model.live import Live
+from website_frontend.model.profile import Profile
 from website_frontend.model.project_status import ProjectStatus
+from website_frontend.model.primary_social import PrimarySocial
+from website_frontend.model.social_link import SocialLink
 from website_frontend.model.tech_badge import TechBadge
 from website_frontend.state import page_state
 from website_frontend.state.page_state import PageState
@@ -24,8 +27,13 @@ def _state() -> PageState:
     object.__setattr__(state, "parent_state", None)
     object.__setattr__(state, "live_status", Live.offline())
     object.__setattr__(state, "featured_info", [])
+    object.__setattr__(state, "work_social_links", [])
+    object.__setattr__(state, "community_social_links", [])
+    object.__setattr__(state, "resources_social_links", [])
+    object.__setattr__(state, "contact_social_links", [])
     object.__setattr__(state, "timezone", "")
     object.__setattr__(state, "next_live", "")
+    object.__setattr__(state, "profile_info", page_state.get_default_profile())
     object.__setattr__(
         state,
         "avatar_status",
@@ -36,6 +44,8 @@ def _state() -> PageState:
             icon="fa-bolt",
         ),
     )
+    object.__setattr__(state, "github_url", "https://github.com/deivisaherreraj")
+    object.__setattr__(state, "linkedin_url", "https://linkedin.com/in/deivisaherreraj")
     object.__setattr__(state, "technologies", [])
     return state
 
@@ -93,17 +103,26 @@ def test_featured_links_sets_featured_projects(monkeypatch):
     assert state.featured_info == expected
 
 
-def test_check_avatar_status_builds_status_from_service_key(monkeypatch):
+def test_check_avatar_status_builds_status_from_profile_key(monkeypatch):
     state = _state()
     calls: list[str] = []
+    state.profile_info = Profile(
+        full_name="Deivis Herrera",
+        handle="@dherrerajdev",
+        headline="Headline",
+        bio_short="Short bio",
+        avatar_url="https://example.com/avatar.png",
+        email="deivis@example.com",
+        availability_status_key="empleo",
+        tech_stack_summary="Python, Reflex",
+        primary_socials=[],
+    )
     expected = AvatarStatus(
         key="empleo",
         text="Disponible para empleo",
         class_name="is-hiring",
         icon="fa-briefcase",
     )
-
-    monkeypatch.setattr(page_state, "get_avatar_status_key", lambda: "empleo")
 
     def fake_build_avatar_status(key: str) -> AvatarStatus:
         calls.append(key)
@@ -115,6 +134,105 @@ def test_check_avatar_status_builds_status_from_service_key(monkeypatch):
 
     assert state.avatar_status == expected
     assert calls == ["empleo"]
+
+
+def test_load_social_links_sets_section_lists(monkeypatch):
+    state = _state()
+    expected = {
+        "work": [
+            SocialLink(
+                label="Workana",
+                url="https://example.com/workana",
+                icon="fa-solid fa-briefcase",
+                section="work",
+                priority=1,
+                is_active=True,
+                is_external=True,
+            )
+        ],
+        "community": [
+            SocialLink(
+                label="Discord",
+                url="https://discord.gg/example",
+                icon="fa-brands fa-discord",
+                section="community",
+                priority=2,
+                is_active=True,
+                is_external=True,
+            )
+        ],
+        "resources": [],
+        "contact": [
+            SocialLink(
+                label="Email",
+                url="mailto:test@example.com",
+                icon="fa-solid fa-envelope",
+                section="contact",
+                priority=3,
+                is_active=True,
+                is_external=False,
+            )
+        ],
+    }
+
+    monkeypatch.setattr(page_state, "get_social_links_by_section", lambda: expected)
+
+    asyncio.run(_event_fn(PageState.load_social_links)(state))
+
+    assert state.work_social_links == expected["work"]
+    assert state.community_social_links == expected["community"]
+    assert state.resources_social_links == expected["resources"]
+    assert state.contact_social_links == expected["contact"]
+
+
+def test_load_profile_sets_profile_and_primary_social_urls(monkeypatch):
+    state = _state()
+    expected_profile = Profile(
+        full_name="Deivis Herrera",
+        handle="@dherrerajdev",
+        headline="Headline",
+        bio_short="Short bio",
+        avatar_url="https://example.com/avatar.png",
+        email="deivis@example.com",
+        availability_status_key="consultoria",
+        tech_stack_summary="Python, Reflex",
+        primary_socials=[
+            PrimarySocial(
+                label="GitHub",
+                url="https://github.com/example",
+                icon="fa-brands fa-github",
+                is_active=True,
+                priority=2,
+            ),
+            PrimarySocial(
+                label="LinkedIn",
+                url="https://linkedin.com/in/example",
+                icon="fa-brands fa-linkedin",
+                is_active=True,
+                priority=1,
+            ),
+        ],
+    )
+    expected_status = AvatarStatus(
+        key="consultoria",
+        text="Disponible para consultoría",
+        class_name="is-consulting",
+        icon="fa-laptop-code",
+    )
+
+    monkeypatch.setattr(page_state, "get_profile", lambda: expected_profile)
+    monkeypatch.setattr(
+        page_state,
+        "build_avatar_status",
+        lambda key: expected_status if key == "consultoria" else None,
+    )
+
+    asyncio.run(_event_fn(PageState.load_profile)(state))
+
+    assert state.profile_info == expected_profile
+    assert state.avatar_status == expected_status
+    assert state.github_url == "https://github.com/example"
+    assert state.linkedin_url == "https://linkedin.com/in/example"
 
 
 def test_check_schedule_requests_browser_timezone_when_missing(monkeypatch):

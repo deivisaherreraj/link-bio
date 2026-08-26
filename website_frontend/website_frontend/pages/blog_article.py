@@ -2,8 +2,15 @@ import reflex as rx
 
 import website_frontend.shared.browser as browser
 import website_frontend.shared.meta as meta
+from website_frontend.content.blog_articles import BLOG_ARTICLES
 from website_frontend.routes import Route
-from website_frontend.views.status_page import status_page
+from website_frontend.views.blog import blog_article_not_found_view, blog_article_view
+
+
+class BlogArticleState(rx.State):
+    @rx.var
+    def article_slug(self) -> str:
+        return self.router.page.params.get("slug", "")
 
 
 @rx.page(
@@ -14,14 +21,13 @@ from website_frontend.views.status_page import status_page
     meta=meta.blog_article_meta,
 )
 def blog_article() -> rx.Component:
+    cases = [(article.slug, blog_article_view(article)) for article in BLOG_ARTICLES]
+
     return rx.box(
         browser.lang(),
-        status_page(
-            title="Artículo próximamente",
-            message=(
-                "Este artículo todavía no está publicado. Vuelve más tarde para ver "
-                "la publicación completa."
-            ),
-            icon="fa-solid fa-file-lines",
+        rx.match(
+            BlogArticleState.article_slug,
+            *cases,
+            blog_article_not_found_view(),
         ),
     )

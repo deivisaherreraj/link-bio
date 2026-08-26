@@ -12,13 +12,13 @@ from website_frontend.styles.styles import Size, Spacing
 def profile(
     name: str,
     handle: str,
-    tagline: str,
-    tech_stack: str,
+    headline: str,
+    tech_stack_summary: str,
     avatar_url: str,
     avatar_status: AvatarStatus,
     github_url: str | None = None,
     linkedin_url: str | None = None,
-    email_url: str | None = None,
+    email: str | None = None,
 ) -> rx.Component:
     normalized_github_url = (
         github_url.strip()
@@ -30,8 +30,9 @@ def profile(
         if isinstance(linkedin_url, str) and linkedin_url.strip()
         else None
     )
+    normalized_email = email.strip() if isinstance(email, str) and email.strip() else None
     normalized_email_url = (
-        email_url.strip() if isinstance(email_url, str) and email_url.strip() else None
+        f"mailto:{normalized_email}" if normalized_email is not None else None
     )
 
     has_github = normalized_github_url is not None
@@ -111,7 +112,7 @@ def profile(
         ),
         # Tagline
         rx.text(
-            tagline,
+            headline,
             color=Color.WHITE.value,
             font_size=FontSize.MEDIUM.value,
             font_weight=FontWeight.MEDIUM.value,
@@ -119,7 +120,7 @@ def profile(
         ),
         # Tech stack description
         rx.text(
-            tech_stack,
+            tech_stack_summary,
             color=Color.GRAY.value,
             font_size=FontSize.SMALL.value,
             margin_bottom=Size.DEFAULT.value,

@@ -7,7 +7,7 @@ from website_frontend.components.info_text import info_text
 from website_frontend.components.link_button import link_button
 from website_frontend.state.page_state import PageState
 from website_frontend.styles.colors import Color
-from website_frontend.styles.fonts import FontSize, FontWeight
+from website_frontend.styles.fonts import FontSize
 from website_frontend.styles.styles import Margin, Padding, Spacing
 from website_frontend.views.profile import profile
 
@@ -16,17 +16,15 @@ def header(details=True) -> rx.Component:
     return rx.vstack(
         # ProfileHeader
         profile(
-            name="Herrera, Deivis",
-            handle="@dherrerajdev",
-            tagline="Full-Stack Developer & Tech Enthusiast",
-            tech_stack=(
-                "Especializado en desarrollo web moderno y arquitecturas escalables"
-            ),
-            avatar_url="/avatar.jpeg",
+            name=PageState.profile_info.full_name,
+            handle=PageState.profile_info.handle,
+            headline=PageState.profile_info.headline,
+            tech_stack_summary=PageState.profile_info.tech_stack_summary,
+            avatar_url=PageState.profile_info.avatar_url,
             avatar_status=PageState.avatar_status,
-            github_url=site_const.GITHUB_URL,
-            linkedin_url=site_const.LINKEDIN_URL,
-            email_url="mailto:deivisaherreraj@gmail.com",
+            github_url=PageState.github_url,
+            linkedin_url=PageState.linkedin_url,
+            email=PageState.profile_info.email,
         ),
         rx.cond(
             details,
@@ -73,31 +71,7 @@ def header(details=True) -> rx.Component:
                 # Introduction a mi Bio
                 rx.el.Section.create(
                     rx.text(
-                        (
-                            "¡Hola! 👋, Soy Deivis Herrera, Desarrollador Full-Stack "
-                            "con experiencia en crear soluciones de altos impacto, "
-                            "ofreciendo un desarrollo de software confiable y "
-                            "eficiente, "
-                            "tanto del lado del "
-                        ),
-                        rx.text.strong(
-                            "Back-End 💻",
-                            color=Color.WHITE.value,
-                            font_weight=FontWeight.MEDIUM.value,
-                        ),
-                        " como del ",
-                        rx.text.strong(
-                            "Front-End 🌐",
-                            color=Color.WHITE.value,
-                            font_weight=FontWeight.MEDIUM.value,
-                        ),
-                        (
-                            ". Estoy siempre listo para explorar nuevas ideas y hacer "
-                            "realidad proyectos emocionantes. Aquí encontrarás mis "
-                            "trabajos, contacto y perfiles profesionales 🔗. "
-                            "🚀¡Gracias "
-                            "por tu visita y bienvenido a mi mundo digital!"
-                        ),
+                        PageState.profile_info.bio_short,
                         as_="p",
                         font_size=FontSize.MEDIUM.value,
                         color=Color.GRAY.value,
@@ -112,7 +86,7 @@ def header(details=True) -> rx.Component:
         width="100%",
         spacing=Spacing.BIG.value,
         align_items="start",
-        on_mount=[PageState.check_live, PageState.check_avatar_status],
+        on_mount=[PageState.check_live, PageState.load_profile],
     )
 
 
