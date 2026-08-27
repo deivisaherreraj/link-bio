@@ -7,9 +7,32 @@ from website_frontend.components.info_text import info_text
 from website_frontend.components.link_button import link_button
 from website_frontend.state.page_state import PageState
 from website_frontend.styles.colors import Color
-from website_frontend.styles.fonts import FontSize
-from website_frontend.styles.styles import Margin, Padding, Spacing
+from website_frontend.styles.fonts import FontSize, FontWeight
+from website_frontend.styles.styles import Margin, Spacing
 from website_frontend.views.profile import profile
+
+
+def _intro_paragraph() -> rx.Component:
+    return rx.el.P.create(
+        "¡Hola! 👋 Soy ",
+        rx.el.Strong.create(PageState.profile_info.full_name),
+        ", un ",
+        rx.el.Strong.create("desarrollador Full-Stack"),
+        " enfocado en construir ",
+        rx.el.Strong.create("software confiable, escalable y de alto impacto"),
+        ". Trabajo tanto del lado del ",
+        rx.el.Strong.create("Back-End 💻"),
+        " como del ",
+        rx.el.Strong.create("Front-End 🌐"),
+        ", y siempre estoy explorando nuevas ideas para convertirlas en productos reales. Acá vas a encontrar mis proyectos, contenido, formas de contacto y perfiles profesionales 🔗🚀",
+        color=Color.GRAY.value,
+        font_size=FontSize.MEDIUM.value,
+        font_weight=FontWeight.NORMAL.value,
+        line_height="1.8",
+        text_align="center",
+        width="100%",
+        max_width="760px",
+    )
 
 
 def header(details=True) -> rx.Component:
@@ -68,19 +91,10 @@ def header(details=True) -> rx.Component:
                         on_mount=PageState.check_schedule,
                     ),
                 ),
-                # Introduction a mi Bio
-                rx.el.Section.create(
-                    rx.text(
-                        PageState.profile_info.bio_short,
-                        as_="p",
-                        font_size=FontSize.MEDIUM.value,
-                        color=Color.GRAY.value,
-                    ),
-                    padding_top=Padding.ZERO.value,
-                    padding_bottom=Padding.ZERO.value,
-                ),
+                _intro_paragraph(),
                 width="100%",
                 margin_bottom=Margin.VERY_BIG.value,
+                align="center",
             ),
         ),
         width="100%",

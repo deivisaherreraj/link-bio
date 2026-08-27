@@ -65,3 +65,21 @@ def test_profile_hides_blank_social_links() -> None:
     assert 'to:"mailto:test@example.com"' in rendered
     assert 'aria-label":"GitHub"' not in rendered
     assert 'aria-label":"LinkedIn"' not in rendered
+
+
+def test_profile_keeps_social_icons_below_technology_badges() -> None:
+    component = profile(
+        name="Deivis",
+        handle="@dherrerajdev",
+        headline="Tagline",
+        tech_stack_summary="Stack",
+        avatar_url="/avatar.jpeg",
+        avatar_status=_avatar_status(),
+        github_url="https://github.com/example",
+    )
+
+    rendered = str(component)
+
+    assert "Stack" in rendered
+    assert "GitHub" in rendered
+    assert "line_height=\"1.8\"" not in rendered

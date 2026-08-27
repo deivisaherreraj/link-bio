@@ -1,6 +1,7 @@
 import inspect
 
 from website_frontend.model.social_link import SocialLink
+from website_frontend.styles.styles import Color
 from website_frontend.views.links import links, render_social_link
 
 
@@ -25,7 +26,7 @@ def test_render_social_link_uses_model_contract_fields() -> None:
     assert 'mailto:test@example.com' in rendered
     assert 'Direct contact' in rendered
     assert 'fa-solid fa-envelope' in rendered
-    assert '2px solid #123456' in rendered
+    assert '1px solid #123456' in rendered
     assert '"padding" : "12px"' in rendered or '["padding"] : "12px"' in rendered
     assert 'target:(false ? "_blank" : "")' in rendered
 
@@ -46,9 +47,29 @@ def test_render_social_link_visually_separates_disabled_cards() -> None:
 
     rendered = str(component)
 
-    assert '(false ? "1" : "0.42")' in rendered
-    assert 'saturate(0.65)' in rendered
-    assert 'linear-gradient(180deg, #0b1016 0%, #090d12 100%)' in rendered
+    assert '(false ? "1" : "0.74")' in rendered
+    assert 'Pr' in rendered
+    assert '\\u00f3ximamente' in rendered
+    assert 'grayscale(0.1) saturate(0.75)' in rendered
+    assert '1px dashed #ffffff26' in rendered
+
+
+def test_render_social_link_uses_brand_colors_for_community_icons() -> None:
+    component = render_social_link(
+        SocialLink(
+            label="Discord",
+            url="https://discord.gg/example",
+            icon="fa-brands fa-discord",
+            section="community",
+            priority=1,
+            is_active=True,
+            is_external=True,
+        )
+    )
+
+    rendered = str(component)
+
+    assert Color.DISCORD.value in rendered
 
 
 def test_links_view_loads_featured_and_social_link_state_on_mount() -> None:

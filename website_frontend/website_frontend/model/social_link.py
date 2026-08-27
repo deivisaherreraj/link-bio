@@ -10,6 +10,7 @@ class SocialLink(BaseModel):
     label: str
     url: str
     icon: str
+    icon_color: str | None = None
     section: SocialLinkSection
     priority: int
     is_active: bool

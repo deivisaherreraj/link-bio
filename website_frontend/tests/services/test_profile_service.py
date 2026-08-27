@@ -182,10 +182,12 @@ def test_get_default_profile_restores_published_fallback_copy() -> None:
     profile = profile_service.get_default_profile()
 
     assert profile.bio_short == (
-        "Desarrollador Full-Stack con experiencia creando soluciones de alto "
-        "impacto y software confiable, tanto del lado del Back-End como del "
-        "Front-End. Acá vas a encontrar mis trabajos, contacto y perfiles "
-        "profesionales."
+        "¡Hola! 👋 Soy Deivis Herrera, desarrollador Full-Stack enfocado en "
+        "construir software confiable, escalable y de alto impacto. Trabajo "
+        "tanto del lado del Back-End 💻 como del Front-End 🌐, y siempre estoy "
+        "explorando nuevas ideas para convertirlas en productos reales. Acá vas "
+        "a encontrar mis proyectos, contenido, formas de contacto y perfiles "
+        "profesionales 🔗🚀"
     )
     assert (
         profile.tech_stack_summary

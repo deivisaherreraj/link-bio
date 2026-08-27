@@ -34,6 +34,7 @@ def link_button(
         "minHeight": "96px",
         "background": "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.05) 100%)",
         "boxShadow": "0 18px 44px rgba(0, 0, 0, 0.22)",
+        "transition": "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease",
     }
 
     if is_disabled:
@@ -119,13 +120,13 @@ def link_button(
                             font_size=FontSize.TINY.value,
                             font_weight=FontWeight.MEDIUM.value,
                             color=Color.WHITE.value,
-                            padding=(
-                                f"{Padding.SMALL.value} {Padding.MEDIUM.value}"
-                            ),
+                            padding_y=Padding.SMALL.value,
+                            padding_x=Padding.MEDIUM.value,
                             border_radius="999px",
                             line_height="1",
                             text_transform="uppercase",
                             letter_spacing="0.02em",
+                            white_space="nowrap",
                             style={
                                 "backgroundColor": badge_color,
                                 "border": f"1px solid {Color.BG_WHITE_TRANSPARENT.value}",
@@ -136,8 +137,8 @@ def link_button(
                         ),
                     ),
                     display="flex",
-                    align_items="start",
-                    justify_content="space-between",
+                    align_items="center",
+                    justify_content="flex-start",
                     width="100%",
                     flex_wrap="wrap",
                     gap="8px",
@@ -176,7 +177,11 @@ def link_button(
             width="100%",
         ),
         disabled=is_disabled or not is_actionable,
-        class_name=class_name,
+        class_name=(
+            f"{class_name} transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_48px_rgba(0,0,0,0.26)]"
+            if is_interactive
+            else class_name
+        ).strip(),
         style=style,
         on_click=on_click,
     )

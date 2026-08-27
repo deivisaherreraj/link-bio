@@ -42,6 +42,7 @@ def test_link_featured_renders_optional_actions_when_present() -> None:
     assert "Proyecto destacado" in rendered
     assert "C\\u00f3digo abierto" in rendered
     assert "Live demo" in rendered
+    assert "Ver proyecto" in rendered
     assert '"padingY"' not in rendered
     assert '"paddingTop"' in rendered
 
@@ -86,5 +87,5 @@ def test_link_featured_hides_details_action_when_href_is_missing() -> None:
 
     rendered = str(component)
 
-    assert 'aria-label={"Ver detalles del proyecto Example Project"}' not in rendered
+    assert 'aria-label={"Ver proyecto Example Project"}' not in rendered
     assert "https://github.com/example/project" in rendered

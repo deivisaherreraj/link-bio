@@ -22,7 +22,11 @@ def test_maintenance_page_renders_richer_content() -> None:
     assert "15" in rendered
     assert "30 minutos" in rendered
     assert "Reintentar ahora" in rendered
-    assert "fa-solid fa-screwdriver-wrench" in rendered
+    assert rendered.count("fa-solid fa-screwdriver-wrench") == 1
+    assert "fa-regular fa-clock" in rendered
+    assert "fa-solid fa-newspaper" in rendered
+    assert "fa-solid fa-calendar-days" in rendered
+    assert "fa-solid fa-shield-heart" not in rendered
 
 
 def test_not_found_page_renders_dedicated_recovery_paths() -> None:

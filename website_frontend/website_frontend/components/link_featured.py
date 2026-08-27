@@ -92,13 +92,14 @@ def link_featured(featured: Featured) -> rx.Component:
                 flex="1 1 0%",
                 as_="h3",
                 line_height="1.2",
+                margin_top=Margin.ZERO.value,
             ),
             status_badge(featured.status),
-            align_items="flex-start",
-            justify="between",
+            align_items="center",
+            justify="start",
             width="100%",
             flex_wrap="wrap",
-            spacing=Spacing.EXTRA_SMALL.value,
+            gap="0.75rem",
         ),
         rx.cond(
             featured.description is not None,
@@ -146,7 +147,7 @@ def link_featured(featured: Featured) -> rx.Component:
                 rx.link(
                     rx.hstack(
                         rx.text(
-                            "Ver Detalles",
+                            "Ver proyecto",
                         ),
                         rx.icon(
                             "arrow-right",
@@ -168,12 +169,13 @@ def link_featured(featured: Featured) -> rx.Component:
                     align_items="center",
                     gap="0.25rem",
                     z_index="10",
-                    aria_label=f"Ver detalles del proyecto {featured.title}",
+                    aria_label=f"Ver proyecto {featured.title}",
                     padding_y=Padding.SMALL.value,
                     padding_x=Padding.DEFAULT.value,
                     border_radius="999px",
-                    background_color=Color.PRIMARY.value,
-                    class_name="transition-all z-10 hover:brightness-110",
+                    border=f"1px solid {Color.BG_WHITE_TRANSPARENT.value}",
+                    background_color=BackgroundColor.LIGHT.value,
+                    class_name="transition-all z-10 hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/10",
                 ),
             ),
             rx.hstack(
@@ -188,7 +190,9 @@ def link_featured(featured: Featured) -> rx.Component:
             margin_top=Margin.MEDIUM.value,
         ),
         direction="column",
+        justify="end",
         spacing=Spacing.SMALL.value,
         width="100%",
-        padding=Padding.SMALL.value,
+        height="100%",
+        padding=Padding.DEFAULT.value,
     )

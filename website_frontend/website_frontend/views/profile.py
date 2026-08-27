@@ -35,13 +35,9 @@ def profile(
         f"mailto:{normalized_email}" if normalized_email is not None else None
     )
 
-    has_github = normalized_github_url is not None
-    has_linkedin = normalized_linkedin_url is not None
-    has_email = normalized_email_url is not None
-
     social_links: list[rx.Component] = []
 
-    if has_github:
+    if normalized_github_url is not None:
         social_links.append(
             rx.link(
                 rx.el.I.create(
@@ -56,7 +52,7 @@ def profile(
             )
         )
 
-    if has_linkedin:
+    if normalized_linkedin_url is not None:
         social_links.append(
             rx.link(
                 rx.el.I.create(
@@ -71,7 +67,7 @@ def profile(
             )
         )
 
-    if has_email:
+    if normalized_email_url is not None:
         social_links.append(
             rx.link(
                 rx.el.I.create(
@@ -123,7 +119,6 @@ def profile(
             tech_stack_summary,
             color=Color.GRAY.value,
             font_size=FontSize.SMALL.value,
-            margin_bottom=Size.DEFAULT.value,
             as_="p",
         ),
         # Tecnologías (badges)
@@ -133,6 +128,7 @@ def profile(
             wrap="wrap",
             justify_content="center",
             spacing=Spacing.SMALL.value,
+            margin_top=Size.SMALL.value,
             margin_bottom=Size.DEFAULT.value,
         ),
         # Iconos sociales
@@ -140,6 +136,7 @@ def profile(
             *social_links,
             justify="center",
             spacing=Spacing.LARGE.value,
+            width="100%",
         ),
         align_items="center",
         text_align="center",

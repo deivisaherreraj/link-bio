@@ -164,6 +164,45 @@ def _panel(*children: rx.Component, background: str | None = None) -> rx.Compone
     )
 
 
+def _info_panel(*, eyebrow: str, title: str, body: str, accent: str) -> rx.Component:
+    return _panel(
+        rx.vstack(
+            rx.text(
+                eyebrow,
+                size="3",
+                color=accent,
+                font_weight=FontWeight.SEMI_BOLD.value,
+            ),
+            rx.text(
+                title,
+                size="4",
+                color=Color.WHITE.value,
+                font_weight=FontWeight.MEDIUM.value,
+            ),
+            rx.text(
+                body,
+                color=TextColor.BODY.value,
+                font_size=FontSize.SMALL.value,
+            ),
+            align="start",
+            spacing=Spacing.VERY_SMALL.value,
+            width="100%",
+        )
+    )
+
+
+def _maintenance_checklist_icon(title: str) -> str:
+    normalized_title = title.strip().lower()
+
+    if "blog" in normalized_title:
+        return "fa-solid fa-newspaper"
+
+    if "esperar" in normalized_title or "publicaci" in normalized_title:
+        return "fa-regular fa-clock"
+
+    return "fa-solid fa-calendar-days"
+
+
 def system_page(
     *,
     status_label: str,
@@ -340,46 +379,31 @@ def maintenance_page(
                 width="100%",
             ),
             rx.grid(
-                _panel(
-                    rx.text(
-                        "Estado del mantenimiento",
-                        size="3",
-                        color=accent,
-                        font_weight=FontWeight.SEMI_BOLD.value,
-                    ),
-                    rx.text(
-                        "Trabajando ahora mismo",
-                        size="4",
-                        color=Color.WHITE.value,
-                        font_weight=FontWeight.MEDIUM.value,
-                    ),
-                    rx.text(
+                _info_panel(
+                    eyebrow="Estado del mantenimiento",
+                    title="Trabajando ahora mismo",
+                    body=(
                         "Estoy publicando mejoras visuales y dejando estable cada "
-                        "ajuste antes de reabrir el sitio completo.",
-                        color=TextColor.BODY.value,
-                        font_size=FontSize.SMALL.value,
+                        "ajuste antes de reabrir el sitio completo."
                     ),
+                    accent=accent,
                 ),
-                _panel(
-                    rx.text(
-                        eta_title,
-                        size="3",
-                        color=accent,
-                        font_weight=FontWeight.SEMI_BOLD.value,
-                    ),
-                    rx.text(
-                        eta_value,
-                        size="5",
-                        color=Color.WHITE.value,
-                        font_weight=FontWeight.SEMI_BOLD.value,
-                    ),
-                    rx.text(
-                        eta_message,
-                        color=TextColor.BODY.value,
-                        font_size=FontSize.SMALL.value,
-                    ),
+                _info_panel(
+                    eyebrow=eta_title,
+                    title=eta_value,
+                    body=eta_message,
+                    accent=accent,
                 ),
-                columns=rx.breakpoints(initial="1", md="2"),
+                _info_panel(
+                    eyebrow="Validación final",
+                    title="Publicación cuidada",
+                    body=(
+                        "Estoy revisando alineación, interacciones y consistencia "
+                        "visual antes de volver a abrir la experiencia completa."
+                    ),
+                    accent=accent,
+                ),
+                columns=rx.breakpoints(initial="1", md="3"),
                 spacing=Spacing.SMALL.value,
                 width="100%",
             ),
@@ -395,7 +419,7 @@ def maintenance_page(
                         _detail_card(
                             title=item,
                             description="",
-                            icon="fa-solid fa-sparkles",
+                            icon=_maintenance_checklist_icon(item),
                             accent=accent,
                         )
                         for item in checklist_items

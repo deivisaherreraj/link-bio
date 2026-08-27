@@ -17,10 +17,12 @@ def _default_profile() -> Profile:
         handle="@dherrerajdev",
         headline="Full-Stack Developer & Tech Enthusiast",
         bio_short=(
-            "Desarrollador Full-Stack con experiencia creando soluciones de alto "
-            "impacto y software confiable, tanto del lado del Back-End como del "
-            "Front-End. Acá vas a encontrar mis trabajos, contacto y perfiles "
-            "profesionales."
+            "¡Hola! 👋 Soy Deivis Herrera, desarrollador Full-Stack enfocado en "
+            "construir software confiable, escalable y de alto impacto. Trabajo "
+            "tanto del lado del Back-End 💻 como del Front-End 🌐, y siempre estoy "
+            "explorando nuevas ideas para convertirlas en productos reales. Acá vas "
+            "a encontrar mis proyectos, contenido, formas de contacto y perfiles "
+            "profesionales 🔗🚀"
         ),
         avatar_url="/avatar.jpeg",
         email=site_const.EMAIL,

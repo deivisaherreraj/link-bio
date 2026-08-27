@@ -15,16 +15,41 @@ from website_frontend.styles.fonts import FontSize, FontWeight
 from website_frontend.styles.styles import Color, Margin, Padding, Spacing
 
 
+def _fallback_icon_color(label: str) -> str | None:
+    normalized_label = label.strip().lower()
+
+    if "discord" in normalized_label:
+        return Color.DISCORD.value
+
+    if "youtube" in normalized_label:
+        return Color.RED.value
+
+    if "twitch" in normalized_label:
+        return Color.PURPLE.value
+
+    return None
+
+
 def render_social_link(link: SocialLink) -> rx.Component:
+    icon_color = (
+        link.icon_color or _fallback_icon_color(link.label)
+        if isinstance(link, SocialLink)
+        else rx.cond(
+            link.icon_color != None,
+            link.icon_color,
+            Color.WHITE.value,
+        )
+    )
+
     return rx.link(
         rx.hstack(
             rx.box(
                 rx.el.I.create(
                     class_name=link.icon,
-                    style={"color": Color.WHITE.value},
+                    style={"color": icon_color},
                 ),
                 font_size=FontSize.DEFAULT.value,
-                color=Color.WHITE.value,
+                color=icon_color,
                 width="32px",
                 height="32px",
                 min_width="32px",
@@ -53,23 +78,29 @@ def render_social_link(link: SocialLink) -> rx.Component:
                             font_size=FontSize.TINY.value,
                             font_weight=FontWeight.MEDIUM.value,
                             color=Color.WHITE.value,
-                            padding=f"{Padding.SMALL.value} {Padding.MEDIUM.value}",
+                            padding_y=Padding.SMALL.value,
+                            padding_x=Padding.MEDIUM.value,
                             border_radius="999px",
                             line_height="1",
                             text_transform="uppercase",
                             letter_spacing="0.02em",
+                            white_space="nowrap",
                             background_color=rx.cond(
                                 link.badge_color != None,
                                 link.badge_color,
-                                Color.PRIMARY.value,
+                                rx.cond(
+                                    link.is_active,
+                                    Color.PRIMARY.value,
+                                    Color.GRAY_DARK.value,
+                                ),
                             ),
                             border=f"1px solid {Color.BG_WHITE_TRANSPARENT.value}",
                             as_="span",
                         ),
                     ),
                     display="flex",
-                    align_items="start",
-                    justify_content="space-between",
+                    align_items="center",
+                    justify_content="flex-start",
                     width="100%",
                     flex_wrap="wrap",
                     gap="8px",
@@ -88,6 +119,7 @@ def render_social_link(link: SocialLink) -> rx.Component:
                 flex_basis="0%",
                 display="flex",
                 flex_direction="column",
+                justify_content="center",
                 text_align="left",
             ),
             rx.box(
@@ -103,17 +135,19 @@ def render_social_link(link: SocialLink) -> rx.Component:
                 flex_shrink=0,
                 padding_left=Padding.SMALL.value,
             ),
-            align="start",
+            align="center",
+            justify="center",
             spacing=Spacing.EXTRA_SMALL.value,
             width="100%",
+            min_height="100%",
         ),
         href=rx.cond(link.is_active, link.url, "#"),
         is_external=link.is_external,
         width="100%",
         display="block",
         text_decoration="none",
-        opacity=rx.cond(link.is_active, "1", "0.42"),
-        filter=rx.cond(link.is_active, "none", "saturate(0.65)"),
+        opacity=rx.cond(link.is_active, "1", "0.74"),
+        filter=rx.cond(link.is_active, "none", "grayscale(0.1) saturate(0.75)"),
         pointer_events=rx.cond(link.is_active, "auto", "none"),
         padding="12px",
         border_radius="12px",
@@ -121,7 +155,7 @@ def render_social_link(link: SocialLink) -> rx.Component:
         background=rx.cond(
             link.is_active,
             BackgroundColor.SURFACE.value,
-            "linear-gradient(180deg, #0b1016 0%, #090d12 100%)",
+            "linear-gradient(180deg, rgba(14, 20, 28, 0.98) 0%, rgba(9, 13, 18, 1) 100%)",
         ),
         box_shadow=rx.cond(
             link.border_color != None,
@@ -130,9 +164,14 @@ def render_social_link(link: SocialLink) -> rx.Component:
         ),
         border=rx.cond(
             link.border_color != None,
-            f"2px solid {link.border_color}",
-            f"1px solid {BorderColor.DEFAULT.value}",
+            f"1px solid {link.border_color}",
+            rx.cond(
+                link.is_active,
+                f"1px solid {BorderColor.DEFAULT.value}",
+                f"1px dashed {BorderColor.WHITE_TRANSPARENT.value}",
+            ),
         ),
+        class_name="transition-all duration-200 hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/5 hover:shadow-[0_16px_32px_rgba(0,0,0,0.24)]",
     )
 
 

@@ -1,5 +1,6 @@
 from website_frontend.model.social_link import SocialLink
 from website_frontend.services import social_links_service
+from website_frontend.styles.styles import Color
 
 
 def test_get_social_links_uses_supabase_rows_when_available(monkeypatch):
@@ -21,10 +22,13 @@ def test_get_social_links_uses_supabase_rows_when_available(monkeypatch):
         lambda: expected,
     )
 
-    assert social_links_service.get_social_links() == expected
+    result = social_links_service.get_social_links()
+
+    assert result[0].label == "Discord"
+    assert result[0].icon_color == Color.DISCORD.value
 
 
-def test_get_social_links_filters_inactive_rows_before_returning(monkeypatch):
+def test_get_social_links_keeps_inactive_rows_visible_for_disabled_cards(monkeypatch):
     monkeypatch.setattr(
         social_links_service.SUPABASE_API,
         "social_links",
@@ -52,7 +56,8 @@ def test_get_social_links_filters_inactive_rows_before_returning(monkeypatch):
 
     result = social_links_service.get_social_links()
 
-    assert [link.label for link in result] == ["Visible"]
+    assert [link.label for link in result] == ["Visible", "Hidden"]
+    assert result[1].badge == "Próximamente"
 
 
 def test_get_social_links_falls_back_to_default_links_when_supabase_is_empty(monkeypatch):
@@ -64,8 +69,12 @@ def test_get_social_links_falls_back_to_default_links_when_supabase_is_empty(mon
 
     result = social_links_service.get_social_links()
 
-    assert result == social_links_service.get_default_social_links()
+    assert [link.label for link in result] == [
+        link.label for link in social_links_service.get_default_social_links()
+    ]
     assert any(link.label == "Workana" for link in result)
+    assert any(link.label == "Mi Setup" and not link.is_active for link in result)
+    assert any(link.label == "My Public Inbox" and not link.is_active for link in result)
 
 
 def test_get_social_links_by_section_groups_links_in_expected_buckets(monkeypatch):
