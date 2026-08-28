@@ -18,13 +18,13 @@ def footer() -> rx.Component:
                 ),
                 font_size=FontSize.LARGE.value,
                 color=Color.WHITE.value,
-                margin_bottom=Margin.MEDIUM.value,
+                margin_bottom=Margin.VERY_SMALL.value,
             ),
             rx.text(
                 f"Copyright © 2023-{current_year} Deivis Andres Herrera Julio",
                 color=Color.GRAY.value,
                 font_size=FontSize.TINY.value,
-                margin_bottom=Margin.SMALL.value,
+                margin_bottom=Margin.VERY_SMALL.value,
                 as_="p",
             ),
             # Slogan in Spanish
@@ -36,8 +36,9 @@ def footer() -> rx.Component:
                 as_="p",
             ),
             align="center",
+            gap="0rem",
         ),
-        margin_top=Margin.BIG.value,
+        margin_top=Margin.MEDIUM.value,
         margin_bottom=Margin.VERY_BIG.value,
         width="100%",
     )

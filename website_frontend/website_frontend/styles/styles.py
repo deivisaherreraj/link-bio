@@ -128,7 +128,7 @@ title_style = dict(
     color=Color.WHITE.value,
     font_size=FontSize.DEFAULT.value,
     font_weight=FontWeight.MEDIUM.value,
-    margin_bottom=Margin.LARGE.value,
-    padding_bottom=Padding.MEDIUM.value,
+    margin_bottom=Margin.SMALL.value,
+    padding_bottom=Padding.SMALL.value,
     width="100%",
 )

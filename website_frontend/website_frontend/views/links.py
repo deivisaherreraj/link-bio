@@ -209,14 +209,6 @@ def links() -> rx.Component:
             PageState.featured_info,
             section(
                 "Proyectos Destacados",
-                rx.text(
-                    "Una selección breve de productos, experimentos y builds activos.",
-                    font_size=FontSize.SMALL.value,
-                    font_weight=FontWeight.NORMAL.value,
-                    color=Color.GRAY.value,
-                    margin_top=Margin.ZERO.value,
-                    as_="p",
-                ),
                 auto_scrolling_carousel(
                     reactive_list=PageState.featured_info,
                     render_function=lambda featured: rx.flex(
@@ -230,7 +222,7 @@ def links() -> rx.Component:
                         justify_content="center",
                     ),
                     direction="right",
-                    speed="slow",
+                    speed="fast",
                 ),
             ),
         ),

@@ -9,7 +9,7 @@ def _animation_style(direction: str, speed: str) -> dict:
     animation_direction = "forwards" if direction == "left" else "reverse"
 
     if speed == "fast":
-        duration = "20s"
+        duration = "15s"
     elif speed == "normal":
         duration = "40s"
     else:

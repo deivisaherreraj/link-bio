@@ -93,7 +93,7 @@ def header(details=True) -> rx.Component:
                 ),
                 _intro_paragraph(),
                 width="100%",
-                margin_bottom=Margin.VERY_BIG.value,
+                margin_bottom=Margin.SMALL.value,
                 align="center",
             ),
         ),

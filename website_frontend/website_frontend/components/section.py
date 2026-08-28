@@ -10,7 +10,7 @@ def section(head: str, *children: rx.Component) -> rx.Component:
             title(head),
             *children,
             width="100%",
-            spacing=Spacing.DEFAULT.value,
+            spacing=Spacing.EXTRA_SMALL.value,
             align="stretch",
         ),
         width="100%",
