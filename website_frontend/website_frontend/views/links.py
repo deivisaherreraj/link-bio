@@ -37,7 +37,19 @@ def render_social_link(link: SocialLink) -> rx.Component:
         else rx.cond(
             link.icon_color != None,
             link.icon_color,
-            Color.WHITE.value,
+            rx.cond(
+                link.label == "Discord",
+                Color.DISCORD.value,
+                rx.cond(
+                    link.label == "YouTube",
+                    Color.RED.value,
+                    rx.cond(
+                        link.label == "Twitch",
+                        Color.PURPLE.value,
+                        Color.WHITE.value,
+                    ),
+                ),
+            ),
         )
     )
 
@@ -55,8 +67,8 @@ def render_social_link(link: SocialLink) -> rx.Component:
                 min_width="32px",
                 display="flex",
                 align_items="center",
-                justify_content="center",
-                flex_shrink=0,
+                    justify_content="center",
+                    flex_shrink=0,
                 border_radius="8px",
                 background_color=BackgroundColor.LIGHT.value,
                 border=f"1px solid {Color.BG_WHITE_TRANSPARENT.value}",
@@ -136,7 +148,7 @@ def render_social_link(link: SocialLink) -> rx.Component:
                 padding_left=Padding.SMALL.value,
             ),
             align="center",
-            justify="center",
+            justify="between",
             spacing=Spacing.EXTRA_SMALL.value,
             width="100%",
             min_height="100%",
@@ -144,7 +156,9 @@ def render_social_link(link: SocialLink) -> rx.Component:
         href=rx.cond(link.is_active, link.url, "#"),
         is_external=link.is_external,
         width="100%",
-        display="block",
+        display="flex",
+        align_items="center",
+        justify_content="center",
         text_decoration="none",
         opacity=rx.cond(link.is_active, "1", "0.74"),
         filter=rx.cond(link.is_active, "none", "grayscale(0.1) saturate(0.75)"),
@@ -171,7 +185,21 @@ def render_social_link(link: SocialLink) -> rx.Component:
                 f"1px dashed {BorderColor.WHITE_TRANSPARENT.value}",
             ),
         ),
-        class_name="transition-all duration-200 hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/5 hover:shadow-[0_16px_32px_rgba(0,0,0,0.24)]",
+        transition="transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease",
+        _hover=rx.cond(
+            link.is_active,
+            {
+                "transform": "translateY(-2px)",
+                "background": BackgroundColor.SURFACE_HOVER.value,
+                "boxShadow": "0 16px 32px rgba(0, 0, 0, 0.24)",
+                "borderColor": rx.cond(
+                    link.border_color != None,
+                    link.border_color,
+                    BorderColor.WHITE_TRANSPARENT.value,
+                ),
+            },
+            {},
+        ),
     )
 
 

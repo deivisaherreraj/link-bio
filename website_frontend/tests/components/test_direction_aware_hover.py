@@ -25,7 +25,8 @@ def test_direction_aware_hover_supports_missing_image_url() -> None:
     rendered = str(component)
 
     assert "Contenido" in rendered
-    assert "src:" not in rendered
+    assert '/featured-default.svg' in rendered
     assert "linear-gradient(135deg" in rendered
-    assert "group-hover:opacity-100" in rendered
-    assert "flex-end" in rendered
+    assert "featured-hover-card" in rendered
+    assert "featured-overlay" in rendered
+    assert "featured-scrim" in rendered

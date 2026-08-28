@@ -1,0 +1,30 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="120" y1="72" x2="1080" y2="648" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111C29"/>
+      <stop offset="0.58" stop-color="#0C1219"/>
+      <stop offset="1" stop-color="#070D14"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(332 192) rotate(30.8) scale(418 298)">
+      <stop stop-color="#0099FF" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#0099FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="orb" x1="512" y1="252" x2="688" y2="468" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7DD3FC" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#0099FF" stop-opacity="0.24"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="720" rx="28" fill="url(#bg)"/>
+  <rect width="1200" height="720" rx="28" fill="url(#glow)"/>
+
+  <circle cx="600" cy="332" r="92" fill="url(#orb)" fill-opacity="0.18"/>
+  <circle cx="600" cy="332" r="58" stroke="#7DD3FC" stroke-opacity="0.45" stroke-width="2"/>
+  <path d="M570 332H630" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+  <path d="M600 302V362" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+
+  <g opacity="0.96">
+    <text x="600" y="474" text-anchor="middle" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="700">Project preview</text>
+    <text x="600" y="522" text-anchor="middle" fill="#A5B4C3" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="500">This project does not have a public image yet.</text>
+  </g>
+</svg>

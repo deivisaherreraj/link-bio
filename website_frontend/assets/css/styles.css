@@ -74,6 +74,39 @@
 }
 
 /* ============================================
+  FEATURED HOVER CARD
+============================================ */
+
+.featured-hover-card .featured-image {
+  transition: transform 0.35s ease;
+}
+
+.featured-hover-card .featured-scrim {
+  opacity: 0;
+  backdrop-filter: blur(10px);
+  transition: opacity 0.28s ease;
+}
+
+.featured-hover-card .featured-overlay {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.featured-hover-card:hover .featured-image {
+  transform: scale(1.05);
+}
+
+.featured-hover-card:hover .featured-scrim {
+  opacity: 1;
+}
+
+.featured-hover-card:hover .featured-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
   ERROR PAGE ANIMATIONS
 ============================================ */
 

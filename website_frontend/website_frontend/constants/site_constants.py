@@ -21,14 +21,14 @@ GUMROAD_URL = "https://dherrerajdev.gumroad.com/"
 # Recursos y más
 BOOK_URL = "/"
 BOOKS_URL = "/"
-SETUP_URL = "/"
+SETUP_URL = "/setup"
 DEIVISAHERRERAJ_URL = "https://dherreraj.netlify.app"
 DHERRERAJDEV_URL = "#"
 COFFEE_URL = "https://www.buymeacoffee.com/dherrerajdev"
 REPO_URL = "https://github.com/deivisaherreraj/website"
 
 # Contacto
-MYPUBLICINBOX_URL = "/"
+MYPUBLICINBOX_URL = "/inbox"
 EMAIL = "deivisaherreraj@gmail.com"
 
 # Sponsors

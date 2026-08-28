@@ -3,6 +3,7 @@ import reflex as rx
 from website_frontend.components.avatar_with_status import avatar_with_status
 from website_frontend.components.tech_badge import tech_badge
 from website_frontend.model.avatar_status import AvatarStatus
+from website_frontend.model.primary_social import PrimarySocial
 from website_frontend.state.page_state import PageState
 from website_frontend.styles.colors import Color, TextColor
 from website_frontend.styles.fonts import FontSize, FontWeight
@@ -20,31 +21,32 @@ def profile(
     linkedin_url: str | None = None,
     email: str | None = None,
 ) -> rx.Component:
-    normalized_github_url = (
-        github_url.strip()
-        if isinstance(github_url, str) and github_url.strip()
-        else None
-    )
-    normalized_linkedin_url = (
-        linkedin_url.strip()
-        if isinstance(linkedin_url, str) and linkedin_url.strip()
-        else None
-    )
-    normalized_email = email.strip() if isinstance(email, str) and email.strip() else None
-    normalized_email_url = (
-        f"mailto:{normalized_email}" if normalized_email is not None else None
-    )
+    def social_icon(link: PrimarySocial) -> rx.Component:
+        return rx.cond(
+            link.is_active,
+            rx.link(
+                rx.el.I.create(
+                    class_name=link.icon,
+                    font_size=FontSize.EXTRA_LARGE.value,
+                ),
+                href=link.url,
+                is_external=~link.url.startswith("mailto:"),
+                aria_label=link.label,
+                color=TextColor.BODY.value,
+                _hover={"color": Color.PRIMARY.value},
+            ),
+        )
 
-    social_links: list[rx.Component] = []
+    static_social_links: list[rx.Component] = []
 
-    if normalized_github_url is not None:
-        social_links.append(
+    if isinstance(github_url, str) and github_url.strip():
+        static_social_links.append(
             rx.link(
                 rx.el.I.create(
                     class_name="fa-brands fa-github",
                     font_size=FontSize.EXTRA_LARGE.value,
                 ),
-                href=normalized_github_url,
+                href=github_url.strip(),
                 is_external=True,
                 aria_label="GitHub",
                 color=TextColor.BODY.value,
@@ -52,14 +54,14 @@ def profile(
             )
         )
 
-    if normalized_linkedin_url is not None:
-        social_links.append(
+    if isinstance(linkedin_url, str) and linkedin_url.strip():
+        static_social_links.append(
             rx.link(
                 rx.el.I.create(
                     class_name="fa-brands fa-linkedin",
                     font_size=FontSize.EXTRA_LARGE.value,
                 ),
-                href=normalized_linkedin_url,
+                href=linkedin_url.strip(),
                 is_external=True,
                 aria_label="LinkedIn",
                 color=TextColor.BODY.value,
@@ -67,14 +69,14 @@ def profile(
             )
         )
 
-    if normalized_email_url is not None:
-        social_links.append(
+    if isinstance(email, str) and email.strip():
+        static_social_links.append(
             rx.link(
                 rx.el.I.create(
                     class_name="fa-regular fa-envelope",
                     font_size=FontSize.EXTRA_LARGE.value,
                 ),
-                href=normalized_email_url,
+                href=f"mailto:{email.strip()}",
                 is_external=False,
                 aria_label="Email",
                 color=TextColor.BODY.value,
@@ -133,7 +135,8 @@ def profile(
         ),
         # Iconos sociales
         rx.hstack(
-            *social_links,
+            *static_social_links,
+            *([] if static_social_links else [rx.foreach(PageState.profile_info.primary_socials, social_icon)]),
             justify="center",
             spacing=Spacing.LARGE.value,
             width="100%",

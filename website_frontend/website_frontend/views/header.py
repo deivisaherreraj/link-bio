@@ -6,7 +6,7 @@ import website_frontend.constants.site_constants as site_const
 from website_frontend.components.info_text import info_text
 from website_frontend.components.link_button import link_button
 from website_frontend.state.page_state import PageState
-from website_frontend.styles.colors import Color
+from website_frontend.styles.colors import Color, TextColor
 from website_frontend.styles.fonts import FontSize, FontWeight
 from website_frontend.styles.styles import Margin, Spacing
 from website_frontend.views.profile import profile
@@ -14,22 +14,22 @@ from website_frontend.views.profile import profile
 
 def _intro_paragraph() -> rx.Component:
     return rx.el.P.create(
-        "¡Hola! 👋 Soy ",
-        rx.el.Strong.create(PageState.profile_info.full_name),
+        "¡Hola! 👋, Soy ",
+        rx.el.Strong.create(PageState.profile_info.full_name, color=TextColor.HEADER.value),
         ", un ",
-        rx.el.Strong.create("desarrollador Full-Stack"),
+        rx.el.Strong.create("desarrollador Full-Stack", color=TextColor.HEADER.value),
         " enfocado en construir ",
-        rx.el.Strong.create("software confiable, escalable y de alto impacto"),
+        rx.el.Strong.create("software confiable, escalable y de alto impacto", color=TextColor.HEADER.value),
         ". Trabajo tanto del lado del ",
-        rx.el.Strong.create("Back-End 💻"),
+        rx.el.Strong.create("Back-End 💻", color=TextColor.HEADER.value),
         " como del ",
-        rx.el.Strong.create("Front-End 🌐"),
-        ", y siempre estoy explorando nuevas ideas para convertirlas en productos reales. Acá vas a encontrar mis proyectos, contenido, formas de contacto y perfiles profesionales 🔗🚀",
+        rx.el.Strong.create("Front-End 🌐", color=TextColor.HEADER.value),
+        ", y siempre estoy explorando nuevas ideas para convertirlas en productos reales. Acá vas a encontrar mis proyectos, contenido, formas de contacto y perfiles profesionales 🔗🚀 ¡Gracias por tu visita y bienvenido a mi mundo digital!",
         color=Color.GRAY.value,
         font_size=FontSize.MEDIUM.value,
         font_weight=FontWeight.NORMAL.value,
         line_height="1.8",
-        text_align="center",
+        text_align="justify",
         width="100%",
         max_width="760px",
     )

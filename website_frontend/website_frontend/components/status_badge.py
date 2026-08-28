@@ -22,7 +22,7 @@ def status_badge(status_info: ProjectStatus) -> rx.Component:
         padding_x=Padding.MEDIUM.value,
         font_size=FontSize.TINY.value,
         font_weight=FontWeight.SEMI_BOLD.value,
-        border_radius="0.375rem",
+        border_radius="0.5rem",
         white_space="nowrap",
         gap="0.25rem",
         flex_shrink=0,
@@ -32,6 +32,7 @@ def status_badge(status_info: ProjectStatus) -> rx.Component:
         style={
             "color": status_info.color,
             "backgroundColor": status_info.bg_color,
+            "boxShadow": f"0 0 0 1px {status_info.bg_color}",
         },
         as_="span",
     )
