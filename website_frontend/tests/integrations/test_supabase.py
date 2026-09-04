@@ -125,6 +125,67 @@ def test_featured_maps_rows_and_uses_default_status_for_unknown_values():
     ]
 
 
+def test_featured_queries_latest_four_items():
+    api = SupabaseAPI()
+    api.supabase = StubSupabaseClient([])  # type: ignore[assignment]
+
+    result = api.featured()
+
+    assert result == []
+    assert api.supabase.tables == ["featured"]
+    assert api.supabase.query.calls == [
+        ("select", "*"),
+        ("order", ("init_date", True)),
+        ("limit", 4),
+        ("execute", None),
+    ]
+
+
+def test_normalize_featured_item_returns_featured_for_accepted_row():
+    api = SupabaseAPI()
+
+    result = api._normalize_featured_item(
+        {
+            "href": "/blog/example-project",
+            "image_url": None,
+            "title": "Example Project",
+            "description": "Example description",
+            "technologies": ["Python", "Reflex"],
+            "github_url": "https://github.com/example/project",
+            "live_url": None,
+            "status": "production",
+        }
+    )
+
+    assert result == Featured(
+        href="/blog/example-project",
+        image_url=None,
+        title="Example Project",
+        description="Example description",
+        technologies=["Python", "Reflex"],
+        github_url="https://github.com/example/project",
+        live_url=None,
+        status=featured_const.PROJECT_STATUS_CONFIG["production"],
+    )
+
+
+def test_normalize_featured_item_returns_none_for_rejected_row():
+    api = SupabaseAPI()
+
+    result = api._normalize_featured_item(
+        {
+            "href": "#",
+            "image_url": "https://example.com/project.png",
+            "title": "Rejected Project",
+            "github_url": "/",
+            "live_url": None,
+            "status": "production",
+        }
+    )
+
+    assert result is None
+
+
 def test_featured_maps_blank_optional_fields_to_none():
     rows: list[Mapping[str, Any]] = [
         {
@@ -497,6 +558,7 @@ def test_profile_maps_backfilled_profile_contract_and_sorts_socials():
             "handle": "@dherrerajdev",
             "headline": "Full-Stack Developer",
             "bio_short": "Short bio",
+            "bio_short_highlights": ["Short"],
             "avatar_url": "https://example.com/avatar.png",
             "email": "deivis@example.com",
             "availability_status_key": "empleo",
@@ -526,6 +588,9 @@ def test_profile_maps_backfilled_profile_contract_and_sorts_socials():
 
     assert isinstance(result, Profile)
     assert result.full_name == "Deivis Herrera"
+    assert result.bio_short_highlights == ["Short"]
+    assert [segment.text for segment in result.bio_short_segments] == ["Short", " bio"]
+    assert result.bio_short_segments[0].is_highlighted is True
     assert [social.label for social in result.primary_socials] == ["LinkedIn", "GitHub"]
     assert api.supabase.tables == ["profile"]
     assert api.supabase.query.calls == [

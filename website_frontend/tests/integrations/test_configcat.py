@@ -1,7 +1,6 @@
 import json
 from typing import Any
 
-import website_frontend.constants.site_constants as site_const
 from website_frontend.integrations.configcat import ConfigCatAPI
 
 
@@ -21,72 +20,6 @@ class RaisingConfigCatClient:
 
     def get_value(self, key: str, default: str) -> Any:
         raise self.error
-
-
-def test_avatar_status_returns_default_when_client_is_missing():
-    configcat_api = ConfigCatAPI()
-    if hasattr(configcat_api, "configcat"):
-        delattr(configcat_api, "configcat")
-
-    result = configcat_api.avatar_status()
-
-    assert result == site_const.AVAILABILITY_STATUS_DEFAULT
-
-
-def test_avatar_status_normalizes_client_value():
-    configcat_api = ConfigCatAPI()
-    configcat_api.configcat = StubConfigCatClient(
-        {"profile_availability_status": ' "CONSULTORIA" '}
-    )
-
-    result = configcat_api.avatar_status()
-
-    assert result == "consultoria"
-    assert configcat_api.configcat.calls == [
-        ("profile_availability_status", site_const.AVAILABILITY_STATUS_DEFAULT)
-    ]
-
-
-def test_avatar_status_returns_default_for_unknown_value():
-    configcat_api = ConfigCatAPI()
-    configcat_api.configcat = StubConfigCatClient(
-        {"profile_availability_status": ' "desconocido" '}
-    )
-
-    result = configcat_api.avatar_status()
-
-    assert result == site_const.AVAILABILITY_STATUS_DEFAULT
-
-
-def test_avatar_status_returns_default_for_non_string_value():
-    configcat_api = ConfigCatAPI()
-    configcat_api.configcat = StubConfigCatClient(
-        {"profile_availability_status": True}
-    )
-
-    result = configcat_api.avatar_status()
-
-    assert result == site_const.AVAILABILITY_STATUS_DEFAULT
-    assert configcat_api.configcat.calls == [
-        ("profile_availability_status", site_const.AVAILABILITY_STATUS_DEFAULT)
-    ]
-
-
-def test_avatar_status_fails_closed_when_get_value_raises(caplog):
-    configcat_api = ConfigCatAPI()
-    configcat_api.configcat = RaisingConfigCatClient(RuntimeError("boom"))
-
-    with caplog.at_level("WARNING"):
-        result = configcat_api.avatar_status()
-
-    assert result == site_const.AVAILABILITY_STATUS_DEFAULT
-    assert caplog.records[-1].message == "configcat_get_value_failed_closed"
-    assert caplog.records[-1].event == "configcat_get_value_failed_closed"
-    assert caplog.records[-1].integration == "configcat"
-    assert caplog.records[-1].operation == "get_value"
-    assert caplog.records[-1].fail_closed is True
-    assert caplog.records[-1].key == "profile_availability_status"
-    assert caplog.records[-1].error_type == "RuntimeError"
 
 
 def test_schedule_parses_json_payload():

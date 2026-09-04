@@ -5,9 +5,9 @@ from typing import Any, cast
 from website_frontend.model.avatar_status import AvatarStatus
 from website_frontend.model.featured import Featured
 from website_frontend.model.live import Live
+from website_frontend.model.primary_social import PrimarySocial
 from website_frontend.model.profile import Profile
 from website_frontend.model.project_status import ProjectStatus
-from website_frontend.model.primary_social import PrimarySocial
 from website_frontend.model.social_link import SocialLink
 from website_frontend.model.tech_badge import TechBadge
 from website_frontend.state import page_state
@@ -101,6 +101,23 @@ def test_featured_links_sets_featured_projects(monkeypatch):
     asyncio.run(_event_fn(PageState.featured_links)(state))
 
     assert state.featured_info == expected
+
+
+def test_has_multiple_featured_projects_is_false_for_zero_or_one_item() -> None:
+    state = _state()
+
+    assert state.has_multiple_featured_projects is False
+
+    state.featured_info = [_featured_project()]
+
+    assert state.has_multiple_featured_projects is False
+
+
+def test_has_multiple_featured_projects_is_true_for_multiple_items() -> None:
+    state = _state()
+    state.featured_info = [_featured_project(), _featured_project()]
+
+    assert state.has_multiple_featured_projects is True
 
 
 def test_check_avatar_status_builds_status_from_profile_key(monkeypatch):

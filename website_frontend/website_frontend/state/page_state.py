@@ -21,7 +21,6 @@ from website_frontend.services.social_links_service import get_social_links_by_s
 from website_frontend.shared.browser import LOCAL_TIMEZONE_SCRIPT
 from website_frontend.shared.datetime_utils import normalize_timezone
 
-
 DEFAULT_PROFILE = get_default_profile()
 DEFAULT_SOCIAL_LINKS = get_social_links_by_section()
 
@@ -43,6 +42,10 @@ class PageState(rx.State):
     linkedin_url: str | None = get_primary_social_url(DEFAULT_PROFILE, "LinkedIn")
     technologies: list[TechBadge] = []
 
+    @rx.var
+    def has_multiple_featured_projects(self) -> bool:
+        return len(self.featured_info) > 1
+
     @rx.event
     async def check_live(self):
         self.live_status = get_live_status(site_const.USER)
@@ -61,7 +64,9 @@ class PageState(rx.State):
 
     @rx.event
     async def check_avatar_status(self):
-        self.avatar_status = build_avatar_status(self.profile_info.availability_status_key)
+        self.avatar_status = build_avatar_status(
+            self.profile_info.availability_status_key
+        )
 
     @rx.event
     async def load_profile(self):

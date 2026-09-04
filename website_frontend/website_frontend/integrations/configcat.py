@@ -7,8 +7,6 @@ from typing import Any, TypeGuard
 import configcatclient
 import dotenv
 
-import website_frontend.constants.profile_constants as profile_const
-import website_frontend.constants.site_constants as site_const
 from website_frontend.integrations.observability import fail_closed_event
 from website_frontend.shared.schedule_types import LiveSchedule, WeekdayKey
 
@@ -86,27 +84,3 @@ class ConfigCatAPI:
             return {}
 
         return self._normalize_schedule(parsed)
-
-    def avatar_status(self) -> str:
-        """
-        Devuelve el estado de disponibilidad del avatar desde ConfigCat.
-        Flag sugerido: 'profile_availability_status'.
-
-        Normaliza el valor:
-        - trim de espacios
-        - remove comillas sobrantes
-        - lower
-        """
-        # Si no hay SDK o flag, devolvemos 'activo' por defecto.
-        response = self._get_config_value(
-            "profile_availability_status",
-            site_const.AVAILABILITY_STATUS_DEFAULT,
-        )
-
-        # Aseguramos string y normalizamos lo básico
-        value = response.strip().strip('"').strip("'").lower()
-
-        if value in profile_const.AVAILABILITY_STATES:
-            return value
-
-        return site_const.AVAILABILITY_STATUS_DEFAULT

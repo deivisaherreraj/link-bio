@@ -203,26 +203,43 @@ def render_social_link(link: SocialLink) -> rx.Component:
     )
 
 
+def _render_featured_card(featured) -> rx.Component:
+    return rx.flex(
+        direction_aware_hover(
+            image_url=featured.image_url,
+            children=link_featured(featured),
+        ),
+        width="360px",
+        height="288px",
+        align_items="center",
+        justify_content="center",
+    )
+
+
+def featured_section_content(
+    featured_projects: list, use_carousel: bool | rx.Var
+) -> rx.Component:
+    return rx.cond(
+        use_carousel,
+        auto_scrolling_carousel(
+            reactive_list=featured_projects,
+            render_function=_render_featured_card,
+            direction="right",
+            speed="fast",
+        ),
+        rx.foreach(featured_projects, _render_featured_card),
+    )
+
+
 def links() -> rx.Component:
     return rx.vstack(
         rx.cond(
             PageState.featured_info,
             section(
                 "Proyectos Destacados",
-                auto_scrolling_carousel(
-                    reactive_list=PageState.featured_info,
-                    render_function=lambda featured: rx.flex(
-                        direction_aware_hover(
-                            image_url=featured.image_url,
-                            children=link_featured(featured),
-                        ),
-                        width="360px",
-                        height="288px",
-                        align_items="center",
-                        justify_content="center",
-                    ),
-                    direction="right",
-                    speed="fast",
+                featured_section_content(
+                    featured_projects=PageState.featured_info,
+                    use_carousel=PageState.has_multiple_featured_projects,
                 ),
             ),
         ),

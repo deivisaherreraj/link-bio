@@ -50,16 +50,7 @@ class SupabaseAPI:
             return []
 
         if isinstance(raw_value, list):
-            normalized: list[str] = []
-            for technology in raw_value:
-                if not isinstance(technology, str):
-                    continue
-
-                value = technology.strip()
-                if value:
-                    normalized.append(value)
-
-            return normalized
+            return self._normalize_string_list(raw_value)
 
         if isinstance(raw_value, str):
             # Cadena "React, Node.js, MongoDB"
@@ -67,6 +58,22 @@ class SupabaseAPI:
 
         # Cualquier otro tipo, se ignora
         return []
+
+    def _normalize_string_list(self, raw_value: object) -> list[str]:
+        if not isinstance(raw_value, list):
+            return []
+
+        normalized: list[str] = []
+
+        for item in raw_value:
+            if not isinstance(item, str):
+                continue
+
+            value = item.strip()
+            if value:
+                normalized.append(value)
+
+        return normalized
 
     def _get_string(self, payload: Mapping[str, object], key: str) -> str:
         value = payload.get(key)
@@ -234,6 +241,32 @@ class SupabaseAPI:
 
         return featured_const.PROJECT_STATUS_CONFIG[normalized_key]
 
+    def _normalize_featured_item(
+        self, featured_item: Mapping[str, object]
+    ) -> Featured | None:
+        payload = dict(featured_item)
+        title = self._get_string(payload, "title")
+        if not title:
+            return None
+
+        href = self._get_optional_actionable_target(payload, "href")
+        github_url = self._get_optional_external_url(payload, "github_url")
+        live_url = self._get_optional_external_url(payload, "live_url")
+
+        if href is None and github_url is None and live_url is None:
+            return None
+
+        return Featured(
+            href=href,
+            image_url=self._get_optional_string(payload, "image_url"),
+            title=title,
+            description=self._get_optional_string(payload, "description"),
+            technologies=self._normalize_technologies(payload.get("technologies")),
+            github_url=github_url,
+            live_url=live_url,
+            status=self._get_status_config(payload.get("status")),
+        )
+
     def featured(self) -> list[Featured]:
         if not hasattr(self, "supabase"):
             return []
@@ -254,45 +287,11 @@ class SupabaseAPI:
                     if not isinstance(featured_item, Mapping):
                         continue
 
-                    featured_item = dict(featured_item)
-                    href = self._get_optional_string(featured_item, "href")
-                    image_url = self._get_optional_string(featured_item, "image_url")
-                    title = self._get_string(featured_item, "title")
-                    github_url = self._get_optional_external_url(
-                        featured_item, "github_url"
-                    )
-                    live_url = self._get_optional_external_url(featured_item, "live_url")
-
-                    if not title:
+                    normalized_item = self._normalize_featured_item(featured_item)
+                    if normalized_item is None:
                         continue
 
-                    if href is not None and not is_actionable_navigation_target(href):
-                        href = None
-
-                    if href is None and github_url is None and live_url is None:
-                        continue
-
-                    technologies = self._normalize_technologies(
-                        featured_item.get("technologies")
-                    )
-                    status_config = self._get_status_config(
-                        featured_item.get("status")
-                    )
-
-                    featured_data.append(
-                        Featured(
-                            href=href,
-                            image_url=image_url,
-                            title=title,
-                            description=self._get_optional_string(
-                                featured_item, "description"
-                            ),
-                            technologies=technologies,
-                            github_url=github_url,
-                            live_url=live_url,
-                            status=status_config,
-                        )
-                    )
+                    featured_data.append(normalized_item)
 
             return featured_data
         except Exception as exc:
@@ -350,6 +349,9 @@ class SupabaseAPI:
                 handle=handle,
                 headline=headline,
                 bio_short=bio_short,
+                bio_short_highlights=self._normalize_string_list(
+                    payload.get("bio_short_highlights")
+                ),
                 avatar_url=avatar_url,
                 email=email,
                 availability_status_key=availability_status_key,

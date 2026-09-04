@@ -5,14 +5,6 @@ from website_frontend.model.profile import Profile
 from website_frontend.services import profile_service
 
 
-class StubConfigCatAPI:
-    def __init__(self, avatar_status_key: str) -> None:
-        self.avatar_status_key = avatar_status_key
-
-    def avatar_status(self) -> str:
-        return self.avatar_status_key
-
-
 class StubSupabaseAPI:
     def __init__(self, profile: Profile | None) -> None:
         self.profile_value = profile
@@ -77,11 +69,23 @@ def test_get_default_avatar_status_uses_project_default():
     assert result.class_name == "is-active"
 
 
-def test_get_avatar_status_key_reads_from_adapter(monkeypatch):
+def test_get_avatar_status_key_reads_from_profile(monkeypatch):
     monkeypatch.setattr(
         profile_service,
-        "CONFIGCAT_API",
-        StubConfigCatAPI("empleo"),
+        "SUPABASE_API",
+        StubSupabaseAPI(
+            Profile(
+                full_name="Deivis Herrera",
+                handle="@dherrerajdev",
+                headline="Headline",
+                bio_short="Short bio",
+                avatar_url="https://example.com/avatar.png",
+                email="deivis@example.com",
+                availability_status_key="empleo",
+                tech_stack_summary="Python, Reflex",
+                primary_socials=[],
+            )
+        ),
     )
 
     result = profile_service.get_avatar_status_key()
@@ -187,8 +191,22 @@ def test_get_default_profile_restores_published_fallback_copy() -> None:
         "tanto del lado del Back-End 💻 como del Front-End 🌐, y siempre estoy "
         "explorando nuevas ideas para convertirlas en productos reales. Acá vas "
         "a encontrar mis proyectos, contenido, formas de contacto y perfiles "
-        "profesionales 🔗🚀"
+        "profesionales 🔗🚀 ¡Gracias por tu visita y bienvenido a mi mundo digital!"
     )
+    assert profile.bio_short_highlights == [
+        "Deivis Herrera",
+        "desarrollador Full-Stack",
+        "software confiable, escalable y de alto impacto",
+        "Back-End 💻",
+        "Front-End 🌐",
+    ]
+    assert [segment.text for segment in profile.bio_short_segments if segment.is_highlighted] == [
+        "Deivis Herrera",
+        "desarrollador Full-Stack",
+        "software confiable, escalable y de alto impacto",
+        "Back-End 💻",
+        "Front-End 🌐",
+    ]
     assert (
         profile.tech_stack_summary
         == "Especializado en desarrollo web moderno y arquitecturas escalables"

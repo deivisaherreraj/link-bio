@@ -1,13 +1,11 @@
 import website_frontend.constants.profile_constants as profile_const
 import website_frontend.constants.site_constants as site_const
-from website_frontend.integrations.configcat import ConfigCatAPI
 from website_frontend.integrations.supabase import SupabaseAPI
 from website_frontend.model.avatar_status import AvatarStatus
 from website_frontend.model.primary_social import PrimarySocial
 from website_frontend.model.profile import Profile
 from website_frontend.model.tech_badge import TechBadge
 
-CONFIGCAT_API = ConfigCatAPI()
 SUPABASE_API = SupabaseAPI()
 
 
@@ -22,8 +20,16 @@ def _default_profile() -> Profile:
             "tanto del lado del Back-End 💻 como del Front-End 🌐, y siempre estoy "
             "explorando nuevas ideas para convertirlas en productos reales. Acá vas "
             "a encontrar mis proyectos, contenido, formas de contacto y perfiles "
-            "profesionales 🔗🚀"
+            "profesionales 🔗🚀 ¡Gracias por tu visita y bienvenido a mi mundo "
+            "digital!"
         ),
+        bio_short_highlights=[
+            "Deivis Herrera",
+            "desarrollador Full-Stack",
+            "software confiable, escalable y de alto impacto",
+            "Back-End 💻",
+            "Front-End 🌐",
+        ],
         avatar_url="/avatar.jpeg",
         email=site_const.EMAIL,
         availability_status_key=site_const.AVAILABILITY_STATUS_DEFAULT,
@@ -82,7 +88,7 @@ def get_default_avatar_status() -> AvatarStatus:
 
 
 def get_avatar_status_key() -> str:
-    return CONFIGCAT_API.avatar_status()
+    return get_profile().availability_status_key
 
 
 def build_avatar_status(raw_key: object) -> AvatarStatus:

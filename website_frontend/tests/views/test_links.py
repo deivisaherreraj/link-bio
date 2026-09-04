@@ -2,7 +2,11 @@ import inspect
 
 from website_frontend.model.social_link import SocialLink
 from website_frontend.styles.styles import Color
-from website_frontend.views.links import links, render_social_link
+from website_frontend.views.links import (
+    featured_section_content,
+    links,
+    render_social_link,
+)
 
 
 def test_render_social_link_uses_model_contract_fields() -> None:
@@ -77,3 +81,16 @@ def test_links_view_loads_featured_and_social_link_state_on_mount() -> None:
 
     assert "featured_links" in rendered
     assert "load_social_links" in rendered
+
+
+def test_featured_section_content_renders_single_item_once_without_carousel() -> None:
+    rendered = inspect.getsource(featured_section_content)
+
+    assert "rx.foreach(featured_projects, _render_featured_card)" in rendered
+
+
+def test_featured_section_content_keeps_carousel_for_multiple_items() -> None:
+    rendered = inspect.getsource(links)
+
+    assert "featured_section_content(" in rendered
+    assert "use_carousel=PageState.has_multiple_featured_projects" in rendered
