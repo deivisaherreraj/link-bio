@@ -31,10 +31,5 @@ REPO_URL = "https://github.com/deivisaherreraj/website"
 MYPUBLICINBOX_URL = "/inbox"
 EMAIL = "deivisaherreraj@gmail.com"
 
-# Sponsors
-ELGATO_URL = "/"
-MVP_URL = "/"
-GITHUB_STAR_URL = "/"
-
 # Cursos
 CSHARP_COURSE_URL = "/"

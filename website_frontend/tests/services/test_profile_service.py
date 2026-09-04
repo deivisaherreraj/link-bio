@@ -8,8 +8,12 @@ from website_frontend.services import profile_service
 class StubSupabaseAPI:
     def __init__(self, profile: Profile | None) -> None:
         self.profile_value = profile
+        self.fallbacks: list[Profile] = []
 
-    def profile(self) -> Profile | None:
+    def profile(self, fallback: Profile | None = None) -> Profile | None:
+        if fallback is not None:
+            self.fallbacks.append(fallback)
+
         return self.profile_value
 
 
@@ -147,6 +151,17 @@ def test_build_avatar_status_falls_back_for_incomplete_catalog_entry(monkeypatch
     assert result.class_name == "is-active"
 
 
+def test_build_avatar_status_returns_detached_catalog_model():
+    result = profile_service.build_avatar_status("activo")
+
+    result.text = "Changed"
+
+    assert (
+        profile_service.build_avatar_status("activo").text
+        == "Disponible para proyectos freelance — Respuesta rápida"
+    )
+
+
 def test_get_profile_returns_supabase_profile(monkeypatch):
     expected = Profile(
         full_name="Deivis Herrera",
@@ -159,57 +174,38 @@ def test_get_profile_returns_supabase_profile(monkeypatch):
         tech_stack_summary="Python, Reflex",
         primary_socials=[],
     )
-    monkeypatch.setattr(
-        profile_service,
-        "SUPABASE_API",
-        StubSupabaseAPI(expected),
-    )
+    stub = StubSupabaseAPI(expected)
+    monkeypatch.setattr(profile_service, "SUPABASE_API", stub)
 
     result = profile_service.get_profile()
 
     assert result == expected
+    assert stub.fallbacks == [profile_service.get_default_profile()]
 
 
 def test_get_profile_falls_back_to_default_profile(monkeypatch):
-    monkeypatch.setattr(
-        profile_service,
-        "SUPABASE_API",
-        StubSupabaseAPI(None),
-    )
+    stub = StubSupabaseAPI(None)
+    monkeypatch.setattr(profile_service, "SUPABASE_API", stub)
 
     result = profile_service.get_profile()
 
     assert result == profile_service.get_default_profile()
+    assert stub.fallbacks == [profile_service.get_default_profile()]
 
 
-def test_get_default_profile_restores_published_fallback_copy() -> None:
+def test_get_default_profile_returns_minimal_resilience_copy() -> None:
     profile = profile_service.get_default_profile()
 
-    assert profile.bio_short == (
-        "¡Hola! 👋 Soy Deivis Herrera, desarrollador Full-Stack enfocado en "
-        "construir software confiable, escalable y de alto impacto. Trabajo "
-        "tanto del lado del Back-End 💻 como del Front-End 🌐, y siempre estoy "
-        "explorando nuevas ideas para convertirlas en productos reales. Acá vas "
-        "a encontrar mis proyectos, contenido, formas de contacto y perfiles "
-        "profesionales 🔗🚀 ¡Gracias por tu visita y bienvenido a mi mundo digital!"
-    )
-    assert profile.bio_short_highlights == [
-        "Deivis Herrera",
-        "desarrollador Full-Stack",
-        "software confiable, escalable y de alto impacto",
-        "Back-End 💻",
-        "Front-End 🌐",
-    ]
-    assert [segment.text for segment in profile.bio_short_segments if segment.is_highlighted] == [
-        "Deivis Herrera",
-        "desarrollador Full-Stack",
-        "software confiable, escalable y de alto impacto",
-        "Back-End 💻",
-        "Front-End 🌐",
+    assert profile.full_name == "Deivis Herrera"
+    assert profile.headline == "Software Developer"
+    assert profile.bio_short == "Profile details are temporarily unavailable."
+    assert profile.bio_short_highlights == []
+    assert [segment.text for segment in profile.bio_short_segments] == [
+        "Profile details are temporarily unavailable."
     ]
     assert (
         profile.tech_stack_summary
-        == "Especializado en desarrollo web moderno y arquitecturas escalables"
+        == "Tech stack details are temporarily unavailable."
     )
 
 

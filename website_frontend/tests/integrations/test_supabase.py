@@ -436,6 +436,60 @@ def test_featured_uses_default_status_for_non_string_status_values():
     assert result[0].status != featured_const.PROJECT_STATUS_CONFIG["production"]
 
 
+def test_featured_uses_default_status_for_incomplete_local_status_catalog(monkeypatch):
+    monkeypatch.setitem(
+        featured_const.PROJECT_STATUS_CONFIG,
+        "production",
+        featured_const.ProjectStatus(
+            key="production",
+            label=" ",
+            color="#10B981",
+            bg_color="rgba(16, 185, 129, 0.15)",
+            icon="globe",
+            animation_class="",
+        ),
+    )
+    rows: list[Mapping[str, Any]] = [
+        {
+            "href": "https://example.com/project",
+            "image_url": "https://example.com/project.png",
+            "title": "Example Project",
+            "status": "production",
+        }
+    ]
+    api = SupabaseAPI()
+    api.supabase = StubSupabaseClient(rows)  # type: ignore[assignment]
+
+    result = api.featured()
+
+    assert len(result) == 1
+    assert (
+        result[0].status
+        == featured_const.PROJECT_STATUS_CONFIG[
+            featured_const.DEFAULT_PROJECT_STATUS_KEY
+        ]
+    )
+
+
+def test_featured_returns_detached_status_model_from_local_catalog():
+    rows: list[Mapping[str, Any]] = [
+        {
+            "href": "https://example.com/project",
+            "image_url": "https://example.com/project.png",
+            "title": "Example Project",
+            "status": "production",
+        }
+    ]
+    api = SupabaseAPI()
+    api.supabase = StubSupabaseClient(rows)  # type: ignore[assignment]
+
+    result = api.featured()
+
+    assert len(result) == 1
+    assert result[0].status == featured_const.PROJECT_STATUS_CONFIG["production"]
+    assert result[0].status is not featured_const.PROJECT_STATUS_CONFIG["production"]
+
+
 def test_featured_skips_rows_missing_required_contract_fields():
     rows: list[Mapping[str, Any]] = [
         {
@@ -600,7 +654,7 @@ def test_profile_maps_backfilled_profile_contract_and_sorts_socials():
     ]
 
 
-def test_profile_returns_none_for_incomplete_required_contract():
+def test_profile_returns_none_for_incomplete_required_contract_without_fallback():
     rows: list[Mapping[str, Any]] = [
         {
             "full_name": "Deivis Herrera",
@@ -620,6 +674,50 @@ def test_profile_returns_none_for_incomplete_required_contract():
     result = api.profile()
 
     assert result is None
+
+
+def test_profile_backfills_missing_contract_fields_from_fallback():
+    rows: list[Mapping[str, Any]] = [
+        {
+            "full_name": "Remote Name",
+            "handle": "@remote",
+            "headline": "",
+            "bio_short": "",
+            "avatar_url": "javascript:alert('xss')",
+            "email": "invalid-email",
+            "availability_status_key": "",
+            "tech_stack_summary": "Remote stack",
+            "primary_socials": "invalid",
+        }
+    ]
+    fallback = Profile(
+        full_name="Fallback Name",
+        handle="@fallback",
+        headline="Fallback headline",
+        bio_short="Fallback bio",
+        bio_short_highlights=["Fallback"],
+        avatar_url="/avatar.jpeg",
+        email="fallback@example.com",
+        availability_status_key="activo",
+        tech_stack_summary="Fallback stack",
+        primary_socials=[],
+    )
+    api = SupabaseAPI()
+    api.supabase = StubSupabaseClient(rows)  # type: ignore[assignment]
+
+    result = api.profile(fallback=fallback)
+
+    assert isinstance(result, Profile)
+    assert result.full_name == "Remote Name"
+    assert result.handle == "@remote"
+    assert result.headline == "Fallback headline"
+    assert result.bio_short == "Fallback bio"
+    assert result.bio_short_highlights == ["Fallback"]
+    assert result.avatar_url == "/avatar.jpeg"
+    assert result.email == "fallback@example.com"
+    assert result.availability_status_key == "activo"
+    assert result.tech_stack_summary == "Remote stack"
+    assert result.primary_socials == []
 
 
 def test_profile_skips_invalid_primary_social_items_without_failing_row():

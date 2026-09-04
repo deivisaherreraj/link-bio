@@ -1,4 +1,5 @@
 import asyncio
+import inspect
 from collections.abc import Callable
 from typing import Any, cast
 
@@ -120,39 +121,6 @@ def test_has_multiple_featured_projects_is_true_for_multiple_items() -> None:
     assert state.has_multiple_featured_projects is True
 
 
-def test_check_avatar_status_builds_status_from_profile_key(monkeypatch):
-    state = _state()
-    calls: list[str] = []
-    state.profile_info = Profile(
-        full_name="Deivis Herrera",
-        handle="@dherrerajdev",
-        headline="Headline",
-        bio_short="Short bio",
-        avatar_url="https://example.com/avatar.png",
-        email="deivis@example.com",
-        availability_status_key="empleo",
-        tech_stack_summary="Python, Reflex",
-        primary_socials=[],
-    )
-    expected = AvatarStatus(
-        key="empleo",
-        text="Disponible para empleo",
-        class_name="is-hiring",
-        icon="fa-briefcase",
-    )
-
-    def fake_build_avatar_status(key: str) -> AvatarStatus:
-        calls.append(key)
-        return expected
-
-    monkeypatch.setattr(page_state, "build_avatar_status", fake_build_avatar_status)
-
-    asyncio.run(_event_fn(PageState.check_avatar_status)(state))
-
-    assert state.avatar_status == expected
-    assert calls == ["empleo"]
-
-
 def test_load_social_links_sets_section_lists(monkeypatch):
     state = _state()
     expected = {
@@ -200,6 +168,16 @@ def test_load_social_links_sets_section_lists(monkeypatch):
     assert state.community_social_links == expected["community"]
     assert state.resources_social_links == expected["resources"]
     assert state.contact_social_links == expected["contact"]
+
+
+def test_page_state_defaults_do_not_load_social_links_at_import_time(monkeypatch):
+    rendered = inspect.getsource(page_state)
+
+    assert "DEFAULT_SOCIAL_LINKS = get_social_links_by_section()" not in rendered
+    assert "work_social_links: list[SocialLink] = []" in rendered
+    assert "community_social_links: list[SocialLink] = []" in rendered
+    assert "resources_social_links: list[SocialLink] = []" in rendered
+    assert "contact_social_links: list[SocialLink] = []" in rendered
 
 
 def test_load_profile_sets_profile_and_primary_social_urls(monkeypatch):

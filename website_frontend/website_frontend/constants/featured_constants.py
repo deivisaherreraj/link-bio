@@ -1,9 +1,7 @@
-from typing import Dict
-
 from website_frontend.model.project_status import ProjectStatus
 
 # Mapeo de estados del proyecto (colores y animaciones)
-PROJECT_STATUS_CONFIG: Dict[str, ProjectStatus] = {
+PROJECT_STATUS_CONFIG: dict[str, ProjectStatus] = {
     "dev": ProjectStatus(
         key="dev",
         label="En Desarrollo",
@@ -64,3 +62,58 @@ PROJECT_STATUS_CONFIG: Dict[str, ProjectStatus] = {
 
 # Clave del estado por defecto
 DEFAULT_PROJECT_STATUS_KEY = "dev"
+
+
+def _build_project_status(key: str, payload: object) -> ProjectStatus | None:
+    if isinstance(payload, ProjectStatus):
+        candidate = payload
+    elif isinstance(payload, dict):
+        try:
+            candidate = ProjectStatus(key=key, **payload)
+        except TypeError:
+            return None
+    else:
+        return None
+
+    label = candidate.label.strip()
+    color = candidate.color.strip()
+    bg_color = candidate.bg_color.strip()
+    icon = candidate.icon.strip()
+    animation_class = candidate.animation_class.strip()
+
+    if not label or not color or not bg_color or not icon:
+        return None
+
+    return ProjectStatus(
+        key=key,
+        label=label,
+        color=color,
+        bg_color=bg_color,
+        icon=icon,
+        animation_class=animation_class,
+    )
+
+
+def resolve_project_status(raw_key: object) -> ProjectStatus:
+    default_status = _build_project_status(
+        DEFAULT_PROJECT_STATUS_KEY,
+        PROJECT_STATUS_CONFIG.get(DEFAULT_PROJECT_STATUS_KEY),
+    )
+    if default_status is None:
+        msg = (
+            "Invalid default project status catalog entry: "
+            f"{DEFAULT_PROJECT_STATUS_KEY}"
+        )
+        raise ValueError(msg)
+
+    if not isinstance(raw_key, str):
+        return default_status
+
+    normalized_key = raw_key.strip().lower()
+    if not normalized_key:
+        return default_status
+
+    return _build_project_status(
+        normalized_key,
+        PROJECT_STATUS_CONFIG.get(normalized_key),
+    ) or default_status

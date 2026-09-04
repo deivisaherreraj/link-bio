@@ -11,31 +11,15 @@ SUPABASE_API = SupabaseAPI()
 
 def _default_profile() -> Profile:
     return Profile(
-        full_name="Herrera, Deivis",
+        full_name="Deivis Herrera",
         handle="@dherrerajdev",
-        headline="Full-Stack Developer & Tech Enthusiast",
-        bio_short=(
-            "¡Hola! 👋 Soy Deivis Herrera, desarrollador Full-Stack enfocado en "
-            "construir software confiable, escalable y de alto impacto. Trabajo "
-            "tanto del lado del Back-End 💻 como del Front-End 🌐, y siempre estoy "
-            "explorando nuevas ideas para convertirlas en productos reales. Acá vas "
-            "a encontrar mis proyectos, contenido, formas de contacto y perfiles "
-            "profesionales 🔗🚀 ¡Gracias por tu visita y bienvenido a mi mundo "
-            "digital!"
-        ),
-        bio_short_highlights=[
-            "Deivis Herrera",
-            "desarrollador Full-Stack",
-            "software confiable, escalable y de alto impacto",
-            "Back-End 💻",
-            "Front-End 🌐",
-        ],
+        headline="Software Developer",
+        bio_short="Profile details are temporarily unavailable.",
+        bio_short_highlights=[],
         avatar_url="/avatar.jpeg",
         email=site_const.EMAIL,
         availability_status_key=site_const.AVAILABILITY_STATUS_DEFAULT,
-        tech_stack_summary=(
-            "Especializado en desarrollo web moderno y arquitecturas escalables"
-        ),
+        tech_stack_summary="Tech stack details are temporarily unavailable.",
         primary_socials=[
             PrimarySocial(
                 label="GitHub",
@@ -55,34 +39,6 @@ def _default_profile() -> Profile:
     )
 
 
-def _resolve_avatar_state(key: str) -> tuple[str, dict[str, str]]:
-    default_key = site_const.AVAILABILITY_STATUS_DEFAULT
-    default_state = profile_const.AVAILABILITY_STATES[default_key]
-
-    candidate = profile_const.AVAILABILITY_STATES.get(key)
-    if not isinstance(candidate, dict):
-        return default_key, default_state
-
-    text = candidate.get("text")
-    class_name = candidate.get("class_name")
-    icon = candidate.get("icon")
-
-    if not isinstance(text, str) or not text.strip():
-        return default_key, default_state
-
-    if not isinstance(class_name, str) or not class_name.strip():
-        return default_key, default_state
-
-    if not isinstance(icon, str) or not icon.strip():
-        return default_key, default_state
-
-    return key, {
-        "text": text.strip(),
-        "class_name": class_name.strip(),
-        "icon": icon.strip(),
-    }
-
-
 def get_default_avatar_status() -> AvatarStatus:
     return build_avatar_status(site_const.AVAILABILITY_STATUS_DEFAULT)
 
@@ -92,20 +48,9 @@ def get_avatar_status_key() -> str:
 
 
 def build_avatar_status(raw_key: object) -> AvatarStatus:
-    if not isinstance(raw_key, str):
-        return get_default_avatar_status()
-
-    normalized_key = raw_key.strip().strip('"').strip("'").lower()
-
-    if not normalized_key:
-        return get_default_avatar_status()
-
-    resolved_key, state = _resolve_avatar_state(normalized_key)
-    return AvatarStatus(
-        key=resolved_key,
-        text=state["text"],
-        class_name=state["class_name"],
-        icon=state["icon"],
+    return profile_const.resolve_availability_status(
+        raw_key,
+        default_key=site_const.AVAILABILITY_STATUS_DEFAULT,
     )
 
 
@@ -145,9 +90,10 @@ def get_default_profile() -> Profile:
 
 
 def get_profile() -> Profile:
-    profile = SUPABASE_API.profile()
+    fallback_profile = get_default_profile()
+    profile = SUPABASE_API.profile(fallback=fallback_profile)
     if profile is None:
-        return get_default_profile()
+        return fallback_profile
 
     return profile
 

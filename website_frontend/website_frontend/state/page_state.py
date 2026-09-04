@@ -22,16 +22,15 @@ from website_frontend.shared.browser import LOCAL_TIMEZONE_SCRIPT
 from website_frontend.shared.datetime_utils import normalize_timezone
 
 DEFAULT_PROFILE = get_default_profile()
-DEFAULT_SOCIAL_LINKS = get_social_links_by_section()
 
 
 class PageState(rx.State):
     live_status = Live.offline()
     featured_info: list[Featured] = []
-    work_social_links: list[SocialLink] = DEFAULT_SOCIAL_LINKS["work"]
-    community_social_links: list[SocialLink] = DEFAULT_SOCIAL_LINKS["community"]
-    resources_social_links: list[SocialLink] = DEFAULT_SOCIAL_LINKS["resources"]
-    contact_social_links: list[SocialLink] = DEFAULT_SOCIAL_LINKS["contact"]
+    work_social_links: list[SocialLink] = []
+    community_social_links: list[SocialLink] = []
+    resources_social_links: list[SocialLink] = []
+    contact_social_links: list[SocialLink] = []
     timezone: str = ""
     next_live: str = ""
     profile_info: Profile = DEFAULT_PROFILE
@@ -61,12 +60,6 @@ class PageState(rx.State):
         self.community_social_links = social_links_by_section["community"]
         self.resources_social_links = social_links_by_section["resources"]
         self.contact_social_links = social_links_by_section["contact"]
-
-    @rx.event
-    async def check_avatar_status(self):
-        self.avatar_status = build_avatar_status(
-            self.profile_info.availability_status_key
-        )
 
     @rx.event
     async def load_profile(self):

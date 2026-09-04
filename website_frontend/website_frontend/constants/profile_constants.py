@@ -1,3 +1,7 @@
+from collections.abc import Mapping
+
+from website_frontend.model.avatar_status import AvatarStatus
+
 # ===============================
 # Estados del Avatar / Disponibilidad
 # ===============================
@@ -58,6 +62,49 @@ AVAILABILITY_STATES: dict[str, dict[str, str]] = {
         "icon": "fa-eye",
     },
 }
+
+
+def _build_avatar_status(key: str, payload: object) -> AvatarStatus | None:
+    if not isinstance(payload, Mapping):
+        return None
+
+    text = payload.get("text")
+    class_name = payload.get("class_name")
+    icon = payload.get("icon")
+
+    if not isinstance(text, str) or not text.strip():
+        return None
+
+    if not isinstance(class_name, str) or not class_name.strip():
+        return None
+
+    if not isinstance(icon, str) or not icon.strip():
+        return None
+
+    return AvatarStatus(
+        key=key,
+        text=text.strip(),
+        class_name=class_name.strip(),
+        icon=icon.strip(),
+    )
+
+
+def resolve_availability_status(raw_key: object, *, default_key: str) -> AvatarStatus:
+    default_status = _build_avatar_status(default_key, AVAILABILITY_STATES.get(default_key))
+    if default_status is None:
+        msg = f"Invalid default availability status catalog entry: {default_key}"
+        raise ValueError(msg)
+
+    if not isinstance(raw_key, str):
+        return default_status
+
+    normalized_key = raw_key.strip().strip('"').strip("'").lower()
+    if not normalized_key:
+        return default_status
+
+    return _build_avatar_status(
+        normalized_key, AVAILABILITY_STATES.get(normalized_key)
+    ) or default_status
 
 # ===============================
 # Tecnologías del Perfil

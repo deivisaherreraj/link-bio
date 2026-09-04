@@ -72,9 +72,9 @@ def test_get_social_links_falls_back_to_default_links_when_supabase_is_empty(mon
     assert [link.label for link in result] == [
         link.label for link in social_links_service.get_default_social_links()
     ]
-    assert any(link.label == "Workana" for link in result)
-    assert any(link.label == "Mi Setup" and not link.is_active for link in result)
-    assert any(link.label == "My Public Inbox" and not link.is_active for link in result)
+    assert [link.label for link in result] == ["Email"]
+    assert result[0].url.startswith("mailto:")
+    assert result[0].is_external is False
 
 
 def test_get_social_links_by_section_groups_links_in_expected_buckets(monkeypatch):

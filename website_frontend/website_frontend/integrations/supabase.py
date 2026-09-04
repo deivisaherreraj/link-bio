@@ -12,8 +12,8 @@ from website_frontend.model.primary_social import PrimarySocial
 from website_frontend.model.profile import Profile
 from website_frontend.model.social_link import SocialLink, SocialLinkSection
 from website_frontend.shared.urls import (
-    is_actionable_href,
     is_actionable_external_url,
+    is_actionable_href,
     is_actionable_navigation_target,
 )
 
@@ -110,7 +110,9 @@ class SupabaseAPI:
 
         return value
 
-    def _get_optional_email(self, payload: Mapping[str, object], key: str) -> str | None:
+    def _get_optional_email(
+        self, payload: Mapping[str, object], key: str
+    ) -> str | None:
         value = self._get_optional_string(payload, key)
         if value is None or "@" not in value or " " in value:
             return None
@@ -230,16 +232,7 @@ class SupabaseAPI:
         return sorted(normalized, key=lambda item: item.priority)
 
     def _get_status_config(self, raw_value: object) -> featured_const.ProjectStatus:
-        default_key = featured_const.DEFAULT_PROJECT_STATUS_KEY
-
-        if not isinstance(raw_value, str):
-            return featured_const.PROJECT_STATUS_CONFIG[default_key]
-
-        normalized_key = raw_value.strip().lower()
-        if normalized_key not in featured_const.PROJECT_STATUS_CONFIG:
-            return featured_const.PROJECT_STATUS_CONFIG[default_key]
-
-        return featured_const.PROJECT_STATUS_CONFIG[normalized_key]
+        return featured_const.resolve_project_status(raw_value)
 
     def _normalize_featured_item(
         self, featured_item: Mapping[str, object]
@@ -306,7 +299,7 @@ class SupabaseAPI:
             )
             return []
 
-    def profile(self) -> Profile | None:
+    def profile(self, fallback: Profile | None = None) -> Profile | None:
         if not hasattr(self, "supabase"):
             return None
 
@@ -327,8 +320,34 @@ class SupabaseAPI:
             bio_short = self._get_string(payload, "bio_short")
             avatar_url = self._get_optional_actionable_target(payload, "avatar_url")
             email = self._get_optional_email(payload, "email")
-            availability_status_key = self._get_string(payload, "availability_status_key")
+            availability_status_key = self._get_string(
+                payload, "availability_status_key"
+            )
             tech_stack_summary = self._get_string(payload, "tech_stack_summary")
+            bio_short_highlights = self._normalize_string_list(
+                payload.get("bio_short_highlights")
+            )
+            primary_socials = self._normalize_primary_socials(
+                payload.get("primary_socials")
+            )
+
+            if fallback is not None:
+                full_name = full_name or fallback.full_name
+                handle = handle or fallback.handle
+                headline = headline or fallback.headline
+                bio_short = bio_short or fallback.bio_short
+                avatar_url = avatar_url or fallback.avatar_url
+                email = email or fallback.email
+                availability_status_key = (
+                    availability_status_key or fallback.availability_status_key
+                )
+                tech_stack_summary = tech_stack_summary or fallback.tech_stack_summary
+
+                if not bio_short_highlights and bio_short == fallback.bio_short:
+                    bio_short_highlights = list(fallback.bio_short_highlights)
+
+                if not primary_socials:
+                    primary_socials = list(fallback.primary_socials)
 
             if not all(
                 [
@@ -349,16 +368,12 @@ class SupabaseAPI:
                 handle=handle,
                 headline=headline,
                 bio_short=bio_short,
-                bio_short_highlights=self._normalize_string_list(
-                    payload.get("bio_short_highlights")
-                ),
+                bio_short_highlights=bio_short_highlights,
                 avatar_url=avatar_url,
                 email=email,
                 availability_status_key=availability_status_key,
                 tech_stack_summary=tech_stack_summary,
-                primary_socials=self._normalize_primary_socials(
-                    payload.get("primary_socials")
-                ),
+                primary_socials=primary_socials,
             )
         except Exception as exc:
             logger.warning(
