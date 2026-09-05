@@ -6,7 +6,7 @@ import dotenv
 from supabase import Client, create_client
 
 import website_frontend.constants.featured_constants as featured_const
-from website_frontend.integrations.observability import fail_closed_event
+from website_frontend.integrations.observability import log_fail_closed_event
 from website_frontend.model.featured import Featured
 from website_frontend.model.primary_social import PrimarySocial
 from website_frontend.model.profile import Profile
@@ -288,14 +288,12 @@ class SupabaseAPI:
 
             return featured_data
         except Exception as exc:
-            logger.warning(
-                "supabase_featured_fetch_failed_closed",
-                extra=fail_closed_event(
-                    event="supabase_featured_fetch_failed_closed",
-                    integration="supabase",
-                    operation="featured",
-                    context={"error_type": type(exc).__name__},
-                ),
+            log_fail_closed_event(
+                logger,
+                event="supabase_featured_fetch_failed_closed",
+                integration="supabase",
+                operation="featured",
+                context={"error_type": type(exc).__name__},
             )
             return []
 
@@ -376,14 +374,12 @@ class SupabaseAPI:
                 primary_socials=primary_socials,
             )
         except Exception as exc:
-            logger.warning(
-                "supabase_profile_fetch_failed_closed",
-                extra=fail_closed_event(
-                    event="supabase_profile_fetch_failed_closed",
-                    integration="supabase",
-                    operation="profile",
-                    context={"error_type": type(exc).__name__},
-                ),
+            log_fail_closed_event(
+                logger,
+                event="supabase_profile_fetch_failed_closed",
+                integration="supabase",
+                operation="profile",
+                context={"error_type": type(exc).__name__},
             )
             return None
 
@@ -399,13 +395,11 @@ class SupabaseAPI:
 
             return self._normalize_social_links(response.data)
         except Exception as exc:
-            logger.warning(
-                "supabase_social_links_fetch_failed_closed",
-                extra=fail_closed_event(
-                    event="supabase_social_links_fetch_failed_closed",
-                    integration="supabase",
-                    operation="social_links",
-                    context={"error_type": type(exc).__name__},
-                ),
+            log_fail_closed_event(
+                logger,
+                event="supabase_social_links_fetch_failed_closed",
+                integration="supabase",
+                operation="social_links",
+                context={"error_type": type(exc).__name__},
             )
             return []

@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Mapping
 
 
@@ -15,3 +16,22 @@ def fail_closed_event(
         "fail_closed": True,
         **(dict(context) if context is not None else {}),
     }
+
+
+def log_fail_closed_event(
+    logger: logging.Logger,
+    *,
+    event: str,
+    integration: str,
+    operation: str,
+    context: Mapping[str, object] | None = None,
+) -> None:
+    logger.warning(
+        event,
+        extra=fail_closed_event(
+            event=event,
+            integration=integration,
+            operation=operation,
+            context=context,
+        ),
+    )

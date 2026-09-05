@@ -7,7 +7,7 @@ from typing import Any, TypeGuard
 import configcatclient
 import dotenv
 
-from website_frontend.integrations.observability import fail_closed_event
+from website_frontend.integrations.observability import log_fail_closed_event
 from website_frontend.shared.schedule_types import LiveSchedule, WeekdayKey
 
 logger = logging.getLogger(__name__)
@@ -33,14 +33,12 @@ class ConfigCatAPI:
         try:
             response: Any = self.configcat.get_value(key, default)
         except Exception as exc:
-            logger.warning(
-                "configcat_get_value_failed_closed",
-                extra=fail_closed_event(
-                    event="configcat_get_value_failed_closed",
-                    integration="configcat",
-                    operation="get_value",
-                    context={"key": key, "error_type": type(exc).__name__},
-                ),
+            log_fail_closed_event(
+                logger,
+                event="configcat_get_value_failed_closed",
+                integration="configcat",
+                operation="get_value",
+                context={"key": key, "error_type": type(exc).__name__},
             )
             return default
 
