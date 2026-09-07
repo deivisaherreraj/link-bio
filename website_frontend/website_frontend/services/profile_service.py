@@ -39,10 +39,6 @@ def _default_profile() -> Profile:
     )
 
 
-def get_default_avatar_status() -> AvatarStatus:
-    return build_avatar_status(site_const.AVAILABILITY_STATUS_DEFAULT)
-
-
 def get_avatar_status_key() -> str:
     return get_profile().availability_status_key
 

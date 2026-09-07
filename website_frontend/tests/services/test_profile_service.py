@@ -66,13 +66,6 @@ def test_build_avatar_status_rejects_non_string_keys_even_if_coercion_would_matc
     assert result.class_name == "is-active"
 
 
-def test_get_default_avatar_status_uses_project_default():
-    result = profile_service.get_default_avatar_status()
-
-    assert result.key == "activo"
-    assert result.class_name == "is-active"
-
-
 def test_get_avatar_status_key_reads_from_profile(monkeypatch):
     monkeypatch.setattr(
         profile_service,
