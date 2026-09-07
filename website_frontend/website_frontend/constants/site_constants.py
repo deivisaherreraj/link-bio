@@ -9,8 +9,6 @@ LINKEDIN_URL = "https://linkedin.com/in/deivisaherreraj"
 
 # Comunidad
 TWITCH_URL = "https://twitch.tv/deivisaherreraj"
-YOUTUBE_URL = "https://youtube.com/@dherrerajdev"
-DISCORD_URL = "https://discord.gg/4pqbjXsrUX"
 
 # Contacto
 EMAIL = "deivisaherreraj@gmail.com"
